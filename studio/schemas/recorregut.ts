@@ -12,6 +12,7 @@ export const recorregut = defineType({
     defineField({name: 'preu', title: 'Preu (€)', type: 'number'}),
     defineField({name: 'puntSortida', title: 'Punt de sortida / arribada', type: 'string'}),
     defineField({name: 'trackGpx', title: 'Track GPX', type: 'file', options: {accept: '.gpx'}}),
+    defineField({name: 'imatge', title: 'Imatge de portada', type: 'image', options: {hotspot: true}}),
     defineField({name: 'descripcio', title: 'Descripció', type: 'array', of: [{type: 'block'}, {type: 'image'}]}),
   ],
 })

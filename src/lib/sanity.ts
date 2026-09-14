@@ -18,13 +18,13 @@ export function urlFor(source: any) {
 
 export const queries = {
   edicioActual: `*[_type == "edicio" && estat == "actual"][0]{
-    any, data, programa, reglament,
-    recorreguts[]->{nom, "slug": slug.current, distanciaKm, desnivell, preu, puntSortida}
+    any, data, programa, reglament, "cartellUrl": cartell.asset->url,
+    recorreguts[]->{nom, "slug": slug.current, distanciaKm, desnivell, preu, puntSortida, "imatgeUrl": imatge.asset->url}
   }`,
-  recorreguts: `*[_type == "recorregut"]{nom, "slug": slug.current, distanciaKm, desnivell, preu, puntSortida}`,
+  recorreguts: `*[_type == "recorregut"]{nom, "slug": slug.current, distanciaKm, desnivell, preu, puntSortida, "imatgeUrl": imatge.asset->url}`,
   recorregutSlugs: `*[_type == "recorregut" && defined(slug.current)]{"slug": slug.current}`,
   recorregutBySlug: `*[_type == "recorregut" && slug.current == $slug][0]{
-    nom, distanciaKm, desnivell, preu, puntSortida, descripcio
+    nom, distanciaKm, desnivell, preu, puntSortida, descripcio, "imatgeUrl": imatge.asset->url
   }`,
   sponsors: `*[_type == "sponsor"] | order(ordre asc){nom, url, categoria, "logoUrl": logo.asset->url}`,
   paginaSlugs: `*[_type == "pagina" && defined(slug.current)]{"slug": slug.current}`,
