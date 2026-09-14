@@ -4,10 +4,10 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { sanity, queries } from '../lib/sanity';
 
-const edicions = await sanity.fetch<{ any: number; resultatsEmbed?: string }[]>(
+const edicions = await sanity.fetch<{ any: number; resultatsEmbed?: string; resultatsLinks?: { titol?: string; url?: string }[] }[]>(
   queries.edicionsResultats,
 );
-const actuals = edicions.filter((e) => e.resultatsEmbed);
+const actuals = edicions.filter((e) => e.resultatsEmbed || e.resultatsLinks?.length);
 ---
 <Layout title="Resultats — Cursa del Fau">
   <Header />
@@ -22,16 +22,29 @@ const actuals = edicions.filter((e) => e.resultatsEmbed);
     {actuals.map((e) => (
       <section class="mt-8">
         <h2 class="text-2xl font-bold">Edició {e.any}</h2>
-        <div class="mt-4 overflow-hidden rounded-2xl border border-stone-200 bg-white">
-          <iframe src={e.resultatsEmbed} width="100%" height="800" style="border:0" loading="lazy" title={`Resultats ${e.any}`} />
-        </div>
+        {(e.resultatsLinks?.length ?? 0) > 0 && (
+          <ul class="mt-3 flex flex-wrap gap-3">
+            {(e.resultatsLinks ?? []).map((l) => (
+              <li>
+                <a href={l.url} target="_blank" rel="noopener" class="inline-block rounded-full border border-stone-300 bg-white px-5 py-2 text-sm font-semibold hover:border-stone-500">
+                  {l.titol} ⬇
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+        {e.resultatsEmbed && (
+          <div class="mt-4 overflow-hidden rounded-2xl border border-stone-200 bg-white">
+            <iframe src={e.resultatsEmbed} width="100%" height="800" style="border:0" loading="lazy" title={`Resultats ${e.any}`} />
+          </div>
+        )}
       </section>
     ))}
     {edicions.length > actuals.length && (
       <section class="mt-8">
         <h2 class="text-xl font-bold">Històric</h2>
         <ul class="mt-2 space-y-1 text-stone-600">
-          {edicions.filter((e) => !e.resultatsEmbed).map((e) => (
+          {edicions.filter((e) => !e.resultatsEmbed && !(e.resultatsLinks?.length)).map((e) => (
             <li>Edició {e.any} — pendent de publicar</li>
           ))}
         </ul>

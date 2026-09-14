@@ -29,6 +29,21 @@ export const edicio = defineType({
       type: 'url',
     }),
     defineField({
+      name: 'resultatsLinks',
+      title: 'Resultats (enllaços a documents)',
+      description: 'Per PDFs o webs externes, ex. classificacions per distància.',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            defineField({name: 'titol', title: 'Títol', type: 'string'}),
+            defineField({name: 'url', title: 'URL', type: 'url'}),
+          ],
+        },
+      ],
+    }),
+    defineField({
       name: 'galeries',
       title: 'Galeries d’imatges',
       type: 'array',
