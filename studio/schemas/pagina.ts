@@ -13,5 +13,11 @@ export const pagina = defineType({
       type: 'array',
       of: [{type: 'block'}, {type: 'image', options: {hotspot: true}}],
     }),
+    defineField({
+      name: 'embedUrl',
+      title: 'URL incrustada (mapa Google, vídeo...)',
+      description: 'Opcional. Enganxa la URL "embed", ex. https://www.google.com/maps/d/embed?mid=...',
+      type: 'url',
+    }),
   ],
 })
