@@ -1,20 +1,45 @@
+---
+import { sanity, queries } from '../lib/sanity';
+
+let pagines: { titol: string; slug: string }[] = [];
+try {
+  pagines = await sanity.fetch(queries.paginesMenu);
+} catch {
+  // Sense connexió: footer sense pàgines
+}
+
+const info = [
+  { href: '/programa', label: 'Programa' },
+  { href: '/reglament', label: 'Reglament' },
+  { href: '/resultats', label: 'Resultats' },
+  { href: '/imatges', label: 'Imatges' },
+];
+---
 <footer id="contacte" class="border-t border-white/10 bg-night-950 text-stone-300">
-  <div class="mx-auto grid max-w-6xl gap-8 px-4 py-12 md:grid-cols-3">
-    <div>
-      <p class="font-display text-2xl font-bold text-white">CURSA <span class="text-fau-400">DEL FAU</span></p>
-      <p class="mt-2 text-sm">Més que una cursa de muntanya.<br />Maçanet de Cabrenys — Alt Empordà</p>
+  <div class="mx-auto grid max-w-6xl gap-10 px-4 py-12 md:grid-cols-4">
+    <div class="md:col-span-2">
+      <img src="/logo-fau-blanc.png" alt="Cursa del Fau" width="276" height="60" class="h-10 w-auto" />
+      <p class="mt-3 text-sm">Més que una cursa de muntanya.<br />Maçanet de Cabrenys — Alt Empordà</p>
     </div>
-    <div class="text-sm">
-      <p class="font-display text-sm font-semibold uppercase tracking-[0.2em] text-white">Contacte</p>
+    <nav class="text-sm" aria-label="Pàgines">
+      <p class="font-display text-sm font-semibold uppercase tracking-[0.2em] text-white">El territori</p>
       <ul class="mt-3 space-y-1">
-        <li><a class="transition hover:text-fau-400" href="mailto:info.cursadelfau@gmail.com">info.cursadelfau@gmail.com</a></li>
+        {pagines.map((p) => (
+          <li><a href={`/pagina/${p.slug}`} class="transition hover:text-fau-400">{p.titol}</a></li>
+        ))}
+      </ul>
+    </nav>
+    <div class="text-sm">
+      <p class="font-display text-sm font-semibold uppercase tracking-[0.2em] text-white">La cursa</p>
+      <ul class="mt-3 space-y-1">
+        {info.map((l) => (
+          <li><a href={l.href} class="transition hover:text-fau-400">{l.label}</a></li>
+        ))}
+        <li class="pt-2"><a class="transition hover:text-fau-400" href="mailto:info.cursadelfau@gmail.com">info.cursadelfau@gmail.com</a></li>
         <li><a class="transition hover:text-fau-400" href="https://www.facebook.com/CursaDelFau">Facebook</a></li>
         <li><a class="transition hover:text-fau-400" href="https://www.instagram.com/cursadelfau_org/">Instagram</a></li>
       </ul>
-    </div>
-    <div class="text-sm">
-      <p class="font-display text-sm font-semibold uppercase tracking-[0.2em] text-white">Organitza</p>
-      <p class="mt-3">Club Excursionista Maçanetenc<br />Senglanassos Esports de Muntanya</p>
+      <p class="mt-3 text-xs text-stone-500">Organitza: Club Excursionista Maçanetenc</p>
     </div>
   </div>
 </footer>

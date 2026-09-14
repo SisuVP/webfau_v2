@@ -1,36 +1,17 @@
 ---
-import { sanity, queries } from '../lib/sanity';
-
-const fixes = [
+const links = [
   { href: '/#curses', label: 'La Cursa' },
-  { href: '/programa', label: 'Programa' },
-  { href: '/reglament', label: 'Reglament' },
-  { href: '/pagina/inscripcions', label: 'Inscripcions' },
   { href: '/resultats', label: 'Resultats' },
   { href: '/imatges', label: 'Imatges' },
-];
-
-const contacte = { href: '/#contacte', label: 'Contacte' };
-
-let pagines: { titol: string; slug: string }[] = [];
-try {
-  pagines = await sanity.fetch(queries.paginesMenu);
-} catch {
-  // Sense connexió: menú només amb enllaços fixos
-}
-
-const links = [
-  ...fixes,
-  ...pagines.map((p) => ({ href: `/pagina/${p.slug}`, label: p.titol })),
-  contacte,
+  { href: '/#contacte', label: 'Contacte' },
 ];
 ---
 <header class="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-night-950/85 backdrop-blur">
   <nav class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-    <a href="/" class="font-display text-xl font-bold tracking-wide text-white">
-      CURSA <span class="text-fau-400">DEL FAU</span>
+    <a href="/" aria-label="Cursa del Fau — inici">
+      <img src="/logo-fau-blanc.png" alt="Cursa del Fau" width="276" height="60" class="h-9 w-auto" />
     </a>
-    <ul class="hidden gap-5 text-[13px] font-semibold uppercase tracking-wider text-stone-300 lg:flex">
+    <ul class="hidden gap-6 text-[13px] font-semibold uppercase tracking-wider text-stone-300 md:flex">
       {links.map((l) => (
         <li><a href={l.href} class="transition hover:text-fau-400">{l.label}</a></li>
       ))}
