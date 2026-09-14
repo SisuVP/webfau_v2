@@ -32,9 +32,10 @@ if (!r) {
 ---
 <Layout title={`${r.nom} — Cursa del Fau`}>
   <Header />
-  <main class="mx-auto max-w-3xl px-4 py-12">
-    <p><a href="/#curses" class="text-sm text-emerald-700 underline">← Recorreguts</a></p>
-    <h1 class="mt-2 text-4xl font-black">{r.nom}</h1>
+  <div class="bg-stone-100 pt-24 text-stone-900">
+  <main class="mx-auto max-w-3xl px-4 py-10">
+    <p><a href="/#curses" class="text-sm font-semibold text-fau-600 underline">← Recorreguts</a></p>
+    <h1 class="font-display mt-2 text-4xl font-bold md:text-5xl">{r.nom}</h1>
     {r.imatgeUrl && (
       <img
         src={`${r.imatgeUrl}?w=1200&auto=format`}
@@ -54,7 +55,7 @@ if (!r) {
       </div>
       <div class="rounded-xl bg-white p-4 text-center shadow-sm">
         <dt class="text-xs uppercase text-stone-500">Preu</dt>
-        <dd class="text-2xl font-bold text-emerald-700">{r.preu}€</dd>
+        <dd class="text-2xl font-bold text-fau-600">{r.preu}€</dd>
       </div>
     </dl>
     {r.descripcio?.length ? (
@@ -66,11 +67,12 @@ if (!r) {
       <p class="mt-4 text-sm text-stone-600">📍 Sortida / arribada: {r.puntSortida}</p>
     )}
     <a
-      href="/#inscripcions"
-      class="mt-8 inline-block rounded-full bg-emerald-700 px-6 py-3 font-semibold text-white hover:bg-emerald-800"
+      href="/pagina/inscripcions"
+      class="font-display mt-8 inline-block rounded-full bg-fau-500 px-8 py-3 text-lg font-semibold uppercase tracking-wide text-night-950 transition hover:bg-fau-400"
     >
       Inscriu-t'hi
     </a>
   </main>
+  </div>
   <Footer />
 </Layout>

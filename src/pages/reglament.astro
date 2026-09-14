@@ -9,12 +9,14 @@ const edicio = await sanity.fetch<{ any?: number; reglament?: any[] }>(queries.e
 ---
 <Layout title={`Reglament ${edicio?.any ?? ''} — Cursa del Fau`}>
   <Header />
-  <main class="mx-auto max-w-3xl px-4 py-12">
-    <p><a href="/" class="text-sm text-emerald-700 underline">← Inici</a></p>
-    <h1 class="mt-2 text-4xl font-black">Reglament {edicio?.any ?? ''}</h1>
-    <div class="mt-6 rounded-2xl border border-stone-200 bg-white p-8">
-      <PortableText value={edicio?.reglament ?? []} />
-    </div>
-  </main>
+  <div class="bg-stone-100 pt-24 text-stone-900">
+    <main class="mx-auto max-w-3xl px-4 py-10">
+      <p><a href="/" class="text-sm font-semibold text-fau-600 underline">← Inici</a></p>
+      <h1 class="font-display mt-2 text-4xl font-bold md:text-5xl">Reglament {edicio?.any ?? ''}</h1>
+      <div class="mt-6 rounded-2xl border border-stone-200 bg-white p-8">
+        <PortableText value={edicio?.reglament ?? []} />
+      </div>
+    </main>
+  </div>
   <Footer />
 </Layout>
