@@ -48,6 +48,23 @@ try {
 } catch {
   // Sense connexió: mostrem mocks
 }
+
+function teaser(blocks: any[] = [], maxChars = 300) {
+  const out: any[] = [];
+  let n = 0;
+  for (const b of blocks) {
+    if (b?._type !== 'block' || !Array.isArray(b.children)) continue;
+    const t = b.children.map((c: any) => c.text ?? '').join('');
+    if (!t.trim()) continue;
+    out.push(b);
+    n += t.length;
+    if (n >= maxChars) break;
+  }
+  return out;
+}
+
+const programaTeaser = teaser(edicio?.programa);
+const reglamentTeaser = teaser(edicio?.reglament);
 ---
 <Layout>
   <Header />
@@ -120,10 +137,15 @@ try {
     <section id="programa" class="mx-auto max-w-6xl px-4 py-10">
       <div class="rounded-2xl bg-stone-950 p-8 text-stone-100">
         <h2 class="text-2xl font-bold">Programa {edicio?.any ?? 2026}</h2>
-        {edicio?.programa?.length ? (
-          <div class="richtext richtext-dark mt-2 text-sm text-stone-200">
-            <PortableText value={edicio.programa} />
-          </div>
+        {programaTeaser.length ? (
+          <>
+            <div class="richtext richtext-dark mt-2 text-sm text-stone-200">
+              <PortableText value={programaTeaser} />
+            </div>
+            <a href="/programa" class="mt-4 inline-block font-semibold text-emerald-300 underline">
+              Veure programa complet →
+            </a>
+          </>
         ) : (
           <p class="mt-2 text-sm text-stone-400">
             Pendent d'omplir: edita l'Edició a l'Studio i afegeix el <strong>Programa</strong>.
@@ -132,14 +154,17 @@ try {
       </div>
     </section>
 
-    {edicio?.reglament?.length && (
+    {reglamentTeaser.length ? (
       <section id="reglament" class="mx-auto max-w-6xl px-4 py-10">
         <h2 class="text-2xl font-bold">Reglament</h2>
         <div class="mt-4 rounded-2xl border border-stone-200 bg-white p-8">
-          <PortableText value={edicio.reglament} />
+          <PortableText value={reglamentTeaser} />
+          <a href="/reglament" class="mt-4 inline-block font-semibold text-emerald-700 underline">
+            Llegir reglament sencer →
+          </a>
         </div>
       </section>
-    )}
+    ) : null}
 
     <section id="sponsors" class="mx-auto max-w-6xl px-4 py-10">
       <h2 class="text-2xl font-bold">Amb el suport de</h2>

@@ -6,6 +6,8 @@ studio/dist/
 # sanity studio artifacts
 .sanity/
 studio/.sanity/
+# carpeta temporal de migració (imatges descarregades de la web vella)
+migracio-imatges/
 
 # dependencies
 node_modules/
