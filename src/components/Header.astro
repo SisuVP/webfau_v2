@@ -1,10 +1,26 @@
 ---
+import { sanity, queries } from '../lib/sanity';
+
+const fixes = [
+  { href: '/#curses', label: 'La Cursa' },
+  { href: '/#programa', label: 'Programa' },
+  { href: '/#inscripcions', label: 'Inscripcions' },
+  { href: '/#resultats', label: 'Resultats' },
+];
+
+const contacte = { href: '/#contacte', label: 'Contacte' };
+
+let pagines: { titol: string; slug: string }[] = [];
+try {
+  pagines = await sanity.fetch(queries.paginesMenu);
+} catch {
+  // Sense connexió: menú només amb enllaços fixos
+}
+
 const links = [
-  { href: '#curses', label: 'La Cursa' },
-  { href: '#programa', label: 'Programa' },
-  { href: '#inscripcions', label: 'Inscripcions' },
-  { href: '#resultats', label: 'Resultats' },
-  { href: '#contacte', label: 'Contacte' },
+  ...fixes,
+  ...pagines.map((p) => ({ href: `/pagina/${p.slug}`, label: p.titol })),
+  contacte,
 ];
 ---
 <header class="sticky top-0 z-50 border-b border-stone-200 bg-stone-50/90 backdrop-blur">
@@ -18,7 +34,7 @@ const links = [
       ))}
     </ul>
     <a
-      href="#inscripcions"
+      href="/#inscripcions"
       class="rounded-full bg-emerald-700 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-800"
     >
       Inscriu-t'hi

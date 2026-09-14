@@ -19,5 +19,13 @@ export const pagina = defineType({
       description: 'Opcional. Enganxa la URL "embed", ex. https://www.google.com/maps/d/embed?mid=...',
       type: 'url',
     }),
+    defineField({
+      name: 'mostraAlMenu',
+      title: 'Mostra al menú',
+      description: 'Si està activat, la pàgina apareix sola al menú principal.',
+      type: 'boolean',
+      initialValue: true,
+    }),
+    defineField({name: 'ordre', title: 'Ordre al menú', type: 'number'}),
   ],
 })

@@ -27,4 +27,5 @@ export const queries = {
   sponsors: `*[_type == "sponsor"] | order(ordre asc){nom, url, categoria, "logoUrl": logo.asset->url}`,
   paginaSlugs: `*[_type == "pagina" && defined(slug.current)]{"slug": slug.current}`,
   paginaBySlug: `*[_type == "pagina" && slug.current == $slug][0]{titol, cos, embedUrl}`,
+  paginesMenu: `*[_type == "pagina" && defined(slug.current) && mostraAlMenu == true] | order(ordre asc){titol, "slug": slug.current}`,
 };
