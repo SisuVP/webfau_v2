@@ -65,66 +65,95 @@ function teaser(blocks: any[] = [], maxChars = 300) {
 
 const programaTeaser = teaser(edicio?.programa);
 const reglamentTeaser = teaser(edicio?.reglament);
+
+const anyEdicio = edicio?.any ?? 2026;
+const numEdicio = `${anyEdicio - 2007}a`;
+const dataFormatejada = edicio?.data
+  ? new Date(edicio.data + 'T00:00:00').toLocaleDateString('ca-ES', { day: 'numeric', month: 'long', year: 'numeric' })
+  : '9 d’agost de 2026';
+const heroFons = recorreguts.find((r) => r.imatgeUrl)?.imatgeUrl;
 ---
 <Layout>
   <Header />
 
   <main>
-    <section class="mx-auto max-w-6xl px-4 pb-10 pt-16 text-center">
-      <p class="inline-block rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold uppercase tracking-widest text-emerald-800">
-        19a edició — 9 d'agost de 2026
-      </p>
-      <h1 class="mx-auto mt-4 max-w-3xl text-4xl font-black leading-tight md:text-6xl">
-        Més que una cursa de muntanya
-      </h1>      <p class="mx-auto mt-4 max-w-2xl text-stone-600">
-        Tres recorreguts pels corriols del Fau, la carena i les riberes de Maçanet de Cabrenys.
-        Tria el teu repte.
-      </p>
-      <div class="mt-6 flex justify-center gap-3">
-        <a href="/pagina/inscripcions" class="rounded-full bg-emerald-700 px-6 py-3 font-semibold text-white hover:bg-emerald-800">
-          Inscripcions
-        </a>
-        <a href="#curses" class="rounded-full border border-stone-300 px-6 py-3 font-semibold hover:border-stone-500">
-          Veure recorreguts
-        </a>
-      </div>
-      {edicio?.cartellUrl && (
+    <section class="hero-gradient relative overflow-hidden">
+      {heroFons && (
         <img
-          src={`${edicio.cartellUrl}?w=1200&auto=format`}
-          alt={`Cartell Cursa del Fau ${edicio.any ?? ''}`}
+          src={`${heroFons}?w=2000&auto=format`}
+          alt=""
+          aria-hidden="true"
           loading="eager"
-          class="mx-auto mt-10 max-h-[70vh] rounded-2xl object-contain shadow-lg"
+          class="absolute inset-0 h-full w-full object-cover opacity-40"
         />
       )}
+      <div class="absolute inset-0 bg-gradient-to-b from-night-950/60 via-night-950/30 to-night-950"></div>
+      <div class="relative mx-auto max-w-6xl px-4 pb-20 pt-32 text-center md:pb-28 md:pt-40">
+        <p class="inline-block rounded-full border border-fau-400/40 bg-fau-500/15 px-4 py-1 font-display text-sm font-semibold uppercase tracking-[0.2em] text-fau-400">
+          {numEdicio} edició — {dataFormatejada}
+        </p>
+        <h1 class="font-display mx-auto mt-6 max-w-4xl text-6xl font-bold leading-[0.95] text-white md:text-8xl">
+          Més que una<br />cursa de muntanya
+        </h1>
+        <p class="mx-auto mt-6 max-w-2xl text-lg text-stone-300">
+          Tres recorreguts pels corriols del Fau, la carena i les riberes de Maçanet de Cabrenys.
+          Tria el teu repte.
+        </p>
+        <div class="mt-8 flex flex-wrap justify-center gap-3">
+          <a href="/pagina/inscripcions" class="rounded-full bg-fau-500 px-8 py-3 font-display text-lg font-semibold uppercase tracking-wide text-night-950 transition hover:bg-fau-400">
+            Inscripcions
+          </a>
+          <a href="/resultats" class="rounded-full border border-white/30 px-8 py-3 font-display text-lg font-semibold uppercase tracking-wide text-white transition hover:border-fau-400 hover:text-fau-400">
+            Resultats
+          </a>
+        </div>
+        <dl class="mx-auto mt-12 grid max-w-3xl grid-cols-3 gap-3">
+          {recorreguts.map((r) => (
+            <div class="rounded-2xl border border-white/10 bg-white/5 px-2 py-4 backdrop-blur">
+              <dt class="font-display text-3xl font-bold text-white md:text-4xl">{r.distanciaKm}<span class="text-fau-400">K</span></dt>
+              <dd class="mt-1 text-[11px] font-semibold uppercase tracking-widest text-stone-400 md:text-xs">{r.desnivell} m +</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
     </section>
 
-    <section id="curses" class="mx-auto max-w-6xl px-4 py-10">
-      <h2 class="text-2xl font-bold">
-        Recorreguts {edicio?.any ? <span class="text-stone-400">· Edició {edicio.any}</span> : null}
+    <div class="bg-stone-100 text-stone-900">
+    <section id="curses" class="mx-auto max-w-6xl px-4 py-14">
+      <p class="font-display text-sm font-semibold uppercase tracking-[0.25em] text-fau-600">Tria el teu repte</p>
+      <h2 class="font-display mt-1 text-4xl font-bold md:text-5xl">
+        Recorreguts {edicio?.any ? <span class="text-stone-400">· {edicio.any}</span> : null}
       </h2>
       {!fromSanity && (
         <p class="mt-1 text-xs text-amber-600">Mostrant dades de mostra (Sanity no disponible en build).</p>
       )}
-      <div class="mt-6 grid gap-4 md:grid-cols-3">
+      <div class="mt-8 grid gap-5 md:grid-cols-3">
         {recorreguts.map((r) => (
-          <article class="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
-            {r.imatgeUrl && (
-              <img src={`${r.imatgeUrl}?w=800&auto=format`} alt={r.nom} loading="lazy" class="h-44 w-full object-cover" />
-            )}
+          <article class="group overflow-hidden rounded-2xl bg-night-900 text-white shadow-lg transition duration-300 hover:-translate-y-1 hover:shadow-2xl">
+            <div class="relative">
+              {r.imatgeUrl ? (
+                <img src={`${r.imatgeUrl}?w=800&auto=format`} alt={r.nom} loading="lazy" class="h-52 w-full object-cover transition duration-500 group-hover:scale-105" />
+              ) : (
+                <div class="hero-gradient h-52 w-full"></div>
+              )}
+              <span class="font-display absolute left-4 top-4 rounded-full bg-fau-500 px-3 py-1 text-sm font-bold text-night-950">
+                {r.distanciaKm}K · {r.desnivell}M+
+              </span>
+            </div>
             <div class="p-6">
-            <h3 class="text-lg font-bold">{r.nom}</h3>
-            <p class="mt-1 text-3xl font-black text-emerald-700">{r.preu}€</p>
-            <ul class="mt-4 space-y-2 text-sm text-stone-600">
+            <h3 class="font-display text-2xl font-semibold">{r.nom}</h3>
+            <p class="mt-1 text-3xl font-extrabold text-fau-400">{r.preu}€</p>
+            <ul class="mt-4 space-y-2 text-sm text-stone-300">
               <li>• {r.distanciaKm} km circular</li>
               <li>• {r.desnivell} m positius</li>
               <li>• Sortida / arribada {r.puntSortida ?? 'Camp de Futbol'}</li>
             </ul>
             {r.slug ? (
-              <a href={`/recorregut/${r.slug}`} class="mt-6 inline-block font-semibold text-emerald-700 underline">
+              <a href={`/recorregut/${r.slug}`} class="mt-6 inline-block font-display text-sm font-semibold uppercase tracking-widest text-fau-400 underline-offset-4 hover:underline">
                 Informació →
               </a>
             ) : (
-              <a href="#inscripcions" class="mt-6 inline-block font-semibold text-emerald-700 underline">
+              <a href="/pagina/inscripcions" class="mt-6 inline-block font-display text-sm font-semibold uppercase tracking-widest text-fau-400 underline-offset-4 hover:underline">
                 Informació →
               </a>
             )}
@@ -135,14 +164,15 @@ const reglamentTeaser = teaser(edicio?.reglament);
     </section>
 
     <section id="programa" class="mx-auto max-w-6xl px-4 py-10">
-      <div class="rounded-2xl bg-stone-950 p-8 text-stone-100">
-        <h2 class="text-2xl font-bold">Programa {edicio?.any ?? 2026}</h2>
+      <div class="rounded-2xl border border-white/10 bg-night-900 p-8 text-stone-100">
+        <p class="font-display text-sm font-semibold uppercase tracking-[0.25em] text-fau-400">No et perdis res</p>
+        <h2 class="font-display mt-1 text-3xl font-bold md:text-4xl">Programa {edicio?.any ?? 2026}</h2>
         {programaTeaser.length ? (
           <>
             <div class="richtext richtext-dark mt-2 text-sm text-stone-200">
               <PortableText value={programaTeaser} />
             </div>
-            <a href="/programa" class="mt-4 inline-block font-semibold text-emerald-300 underline">
+            <a href="/programa" class="mt-4 inline-block font-display text-sm font-semibold uppercase tracking-widest text-fau-400 underline-offset-4 hover:underline">
               Veure programa complet →
             </a>
           </>
@@ -156,10 +186,11 @@ const reglamentTeaser = teaser(edicio?.reglament);
 
     {reglamentTeaser.length ? (
       <section id="reglament" class="mx-auto max-w-6xl px-4 py-10">
-        <h2 class="text-2xl font-bold">Reglament</h2>
+        <p class="font-display text-sm font-semibold uppercase tracking-[0.25em] text-fau-600">Les regles del joc</p>
+        <h2 class="font-display mt-1 text-3xl font-bold md:text-4xl">Reglament</h2>
         <div class="mt-4 rounded-2xl border border-stone-200 bg-white p-8">
           <PortableText value={reglamentTeaser} />
-          <a href="/reglament" class="mt-4 inline-block font-semibold text-emerald-700 underline">
+          <a href="/reglament" class="mt-4 inline-block font-display text-sm font-semibold uppercase tracking-widest text-fau-600 underline-offset-4 hover:underline">
             Llegir reglament sencer →
           </a>
         </div>
@@ -167,7 +198,8 @@ const reglamentTeaser = teaser(edicio?.reglament);
     ) : null}
 
     <section id="sponsors" class="mx-auto max-w-6xl px-4 py-10">
-      <h2 class="text-2xl font-bold">Amb el suport de</h2>
+      <p class="font-display text-sm font-semibold uppercase tracking-[0.25em] text-fau-600">Ho fan possible</p>
+      <h2 class="font-display mt-1 text-3xl font-bold md:text-4xl">Amb el suport de</h2>
       {sponsors.length ? (
         <ul class="mt-6 grid grid-cols-2 items-center gap-6 md:grid-cols-4">
           {sponsors.map((s) => (
@@ -193,26 +225,31 @@ const reglamentTeaser = teaser(edicio?.reglament);
       )}
     </section>
 
-    <section id="inscripcions" class="mx-auto max-w-6xl px-4 py-10 text-center">
-      <h2 class="text-2xl font-bold">Inscripcions</h2>
-      <p class="mt-2 text-stone-600">Les inscripcions es gestionen a la plataforma externa de cronometratge.</p>
-      <a href="/pagina/inscripcions" class="mt-4 inline-block rounded-full bg-stone-900 px-6 py-3 font-semibold text-white">
+    <section id="inscripcions" class="mx-auto max-w-6xl px-4 py-14 text-center">
+      <p class="font-display text-sm font-semibold uppercase tracking-[0.25em] text-fau-600">No et quedis fora</p>
+      <h2 class="font-display mt-1 text-3xl font-bold md:text-4xl">Inscripcions</h2>
+      <p class="mx-auto mt-2 max-w-xl text-stone-600">Les inscripcions es gestionen a la plataforma externa de cronometratge.</p>
+      <a href="/pagina/inscripcions" class="mt-6 inline-block rounded-full bg-fau-500 px-8 py-3 font-display text-lg font-semibold uppercase tracking-wide text-night-950 transition hover:bg-fau-400">
         Anar a inscripcions
       </a>
     </section>
 
-    <section id="resultats" class="mx-auto max-w-6xl px-4 py-10">
-      <h2 class="text-2xl font-bold">Resultats i Imatges</h2>
-      <p class="mt-2 text-stone-600">Classificacions i galeries de fotos per edicions.</p>
-      <div class="mt-4 flex flex-wrap gap-3">
-        <a href="/resultats" class="rounded-full bg-stone-900 px-6 py-3 font-semibold text-white">
-          Veure resultats
-        </a>
-        <a href="/imatges" class="rounded-full border border-stone-300 px-6 py-3 font-semibold hover:border-stone-500">
-          Veure imatges
-        </a>
+    <section id="resultats" class="mx-auto max-w-6xl px-4 pb-14">
+      <div class="rounded-2xl border border-white/10 bg-night-900 p-8 text-white md:p-10">
+        <p class="font-display text-sm font-semibold uppercase tracking-[0.25em] text-fau-400">Reviu-la</p>
+        <h2 class="font-display mt-1 text-3xl font-bold md:text-4xl">Resultats i Imatges</h2>
+        <p class="mt-2 text-stone-300">Classificacions i galeries de fotos per edicions.</p>
+        <div class="mt-6 flex flex-wrap gap-3">
+          <a href="/resultats" class="rounded-full bg-fau-500 px-6 py-3 font-display font-semibold uppercase tracking-wide text-night-950 transition hover:bg-fau-400">
+            Veure resultats
+          </a>
+          <a href="/imatges" class="rounded-full border border-white/30 px-6 py-3 font-display font-semibold uppercase tracking-wide text-white transition hover:border-fau-400 hover:text-fau-400">
+            Veure imatges
+          </a>
+        </div>
       </div>
     </section>
+    </div>
   </main>
 
   <Footer />

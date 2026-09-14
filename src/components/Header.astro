@@ -25,19 +25,19 @@ const links = [
   contacte,
 ];
 ---
-<header class="sticky top-0 z-50 border-b border-stone-200 bg-stone-50/90 backdrop-blur">
+<header class="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-night-950/85 backdrop-blur">
   <nav class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-    <a href="/" class="text-lg font-extrabold tracking-tight">
-      CURSA <span class="text-emerald-700">DEL FAU</span>
+    <a href="/" class="font-display text-xl font-bold tracking-wide text-white">
+      CURSA <span class="text-fau-400">DEL FAU</span>
     </a>
-    <ul class="hidden gap-6 text-sm font-medium md:flex">
+    <ul class="hidden gap-5 text-[13px] font-semibold uppercase tracking-wider text-stone-300 lg:flex">
       {links.map((l) => (
-        <li><a href={l.href} class="hover:text-emerald-700">{l.label}</a></li>
+        <li><a href={l.href} class="transition hover:text-fau-400">{l.label}</a></li>
       ))}
     </ul>
     <a
       href="/pagina/inscripcions"
-      class="rounded-full bg-emerald-700 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-800"
+      class="rounded-full bg-fau-500 px-4 py-2 text-sm font-bold uppercase tracking-wide text-night-950 transition hover:bg-fau-400"
     >
       Inscriu-t'hi
     </a>

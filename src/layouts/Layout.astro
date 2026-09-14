@@ -7,7 +7,7 @@ import '../styles/global.css';
 
 const {
   title = 'Cursa del Fau — Més que una cursa de muntanya',
-  description = 'Cursa de muntanya a Maçanet de Cabrenys. 24km, 18km i 9km. Próxima edició: 9 d’agost de 2026.',
+  description = 'Cursa de muntanya a Maçanet de Cabrenys. 24km, 18km i 9km. 9 d’agost de 2026.',
 } = Astro.props;
 ---
 <!doctype html>
@@ -19,8 +19,18 @@ const {
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ca_ES" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
   </head>
-  <body class="bg-stone-50 text-stone-900 antialiased">
+  <body class="bg-stone-950 font-sans text-stone-100 antialiased">
     <slot />
   </body>
 </html>
