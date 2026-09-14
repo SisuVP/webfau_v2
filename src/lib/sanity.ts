@@ -1,11 +1,28 @@
 import { createClient } from '@sanity/client';
+import { createImageUrlBuilder } from '@sanity/image-url';
 
 export const sanity = createClient({
-  projectId: import.meta.env.PUBLIC_SANITY_PROJECT_ID ?? 'xxxxxx',
+  projectId: import.meta.env.PUBLIC_SANITY_PROJECT_ID ?? 'e497m7tn',
   dataset: import.meta.env.PUBLIC_SANITY_DATASET ?? 'production',
   apiVersion: '2026-01-01',
   useCdn: true,
 });
 
-// Exemple GROQ:
-// *[_type == "edicio" && any == 2026][0]{ any, data, recorreguts[]->{nom, distanciaKm} }
+const builder = createImageUrlBuilder(sanity);
+
+export function urlFor(source: any) {
+  return builder.image(source);
+}
+
+export const queries = {
+  edicioActual: `*[_type == "edicio" && estat == "actual"][0]{
+    any, data,
+    recorreguts[]->{nom, "slug": slug.current, distanciaKm, desnivell, preu}
+  }`,
+  recorreguts: `*[_type == "recorregut"]{nom, "slug": slug.current, distanciaKm, desnivell, preu}`,
+  recorregutSlugs: `*[_type == "recorregut" && defined(slug.current)]{"slug": slug.current}`,
+  recorregutBySlug: `*[_type == "recorregut" && slug.current == $slug][0]{
+    nom, distanciaKm, desnivell, preu, descripcio
+  }`,
+  sponsors: `*[_type == "sponsor"] | order(ordre asc){nom, url, categoria}`,
+};

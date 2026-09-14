@@ -1,0 +1,67 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { sanity, queries } from '../../lib/sanity';
+
+export async function getStaticPaths() {
+  try {
+    const slugs = await sanity.fetch<{ slug: string }[]>(queries.recorregutSlugs);
+    return slugs.map((s) => ({ params: { slug: s.slug } }));
+  } catch {
+    return [];
+  }
+}
+
+const { slug } = Astro.params;
+
+const r = await sanity.fetch<{
+  nom: string;
+  distanciaKm?: number;
+  desnivell?: number;
+  preu?: number;
+  descripcio?: any[];
+}>(queries.recorregutBySlug, { slug });
+
+if (!r) {
+  return Astro.redirect('/');
+}
+
+function blockText(block: any): string {
+  if (block?._type !== 'block' || !Array.isArray(block.children)) return '';
+  return block.children.map((c: any) => c.text ?? '').join('');
+}
+
+const paragraphs = (r.descripcio ?? []).map(blockText).filter(Boolean);
+---
+<Layout title={`${r.nom} — Cursa del Fau`}>
+  <Header />
+  <main class="mx-auto max-w-3xl px-4 py-12">
+    <p><a href="/#curses" class="text-sm text-emerald-700 underline">← Recorreguts</a></p>
+    <h1 class="mt-2 text-4xl font-black">{r.nom}</h1>
+    <dl class="mt-6 grid grid-cols-3 gap-4">
+      <div class="rounded-xl bg-white p-4 text-center shadow-sm">
+        <dt class="text-xs uppercase text-stone-500">Distància</dt>
+        <dd class="text-2xl font-bold">{r.distanciaKm} km</dd>
+      </div>
+      <div class="rounded-xl bg-white p-4 text-center shadow-sm">
+        <dt class="text-xs uppercase text-stone-500">Desnivell</dt>
+        <dd class="text-2xl font-bold">{r.desnivell} m</dd>
+      </div>
+      <div class="rounded-xl bg-white p-4 text-center shadow-sm">
+        <dt class="text-xs uppercase text-stone-500">Preu</dt>
+        <dd class="text-2xl font-bold text-emerald-700">{r.preu}€</dd>
+      </div>
+    </dl>
+    {paragraphs.map((p) => (
+      <p class="mt-4 text-stone-700">{p}</p>
+    ))}
+    <a
+      href="/#inscripcions"
+      class="mt-8 inline-block rounded-full bg-emerald-700 px-6 py-3 font-semibold text-white hover:bg-emerald-800"
+    >
+      Inscriu-t'hi
+    </a>
+  </main>
+  <Footer />
+</Layout>

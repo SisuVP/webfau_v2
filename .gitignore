@@ -1,7 +1,11 @@
 # build output
 dist/
+studio/dist/
 # generated types
 .astro/
+# sanity studio artifacts
+.sanity/
+studio/.sanity/
 
 # dependencies
 node_modules/

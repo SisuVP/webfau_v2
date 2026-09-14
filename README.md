@@ -1,43 +1,50 @@
-# Astro Starter Kit: Minimal
+# Cursa del Fau — web v2
 
-```sh
-npm create astro@latest -- --template minimal
+Web moderna de la Cursa del Fau (Maçanet de Cabrenys).
+
+**Stack:** Astro (SSG estàtic) + Sanity (CMS) + Cloudflare Pages (hosting/CDN) + GitHub (codi + CI/CD).
+
+## Desenvolupament
+
+```powershell
+# Web (http://localhost:4321)
+npm install
+npx astro dev --background
+
+# Studio Sanity (http://localhost:3333) — segon terminal
+cd studio
+npm install
+npm run dev
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Variables d'entorn: copia `.env.example` → `.env` amb `PUBLIC_SANITY_PROJECT_ID`.
+Studio: copia `studio/.env.example` → `studio/.env`.
 
-## 🚀 Project Structure
+| Comanda | Acció |
+| :-- | :-- |
+| `npm run dev` | Dev server web al `localhost:4321` |
+| `npm run build` | Build estàtic a `./dist/` |
+| `npm run preview` | Previsualitza el build |
 
-Inside of your Astro project, you'll see the following folders and files:
+## Deploy (Cloudflare Pages)
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+Projecte Pages connectat al repo `SisuVP/webfau_v2`:
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+- **Build command:** `npm run build`
+- **Output directory:** `dist`
+- **Root directory:** `/` (arrel)
+- **Env vars (Production + Preview):**
+  - `PUBLIC_SANITY_PROJECT_ID=e497m7tn`
+  - `PUBLIC_SANITY_DATASET=production`
+  - `SITE_URL=https://cursadelfau.org`
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+La carpeta `studio/` **no** es desplega (només hi ha l'Studio per editors, es corre en local amb `npm run dev`).
 
-Any static assets, like images, can be placed in the `public/` directory.
+## Rebuild automàtic en publicar (Sanity webhook)
 
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+1. A Cloudflare Pages → Settings → Builds → **Build hooks** → crea'n un (`main`) i copia la URL.
+2. A Sanity Manage (projecte `e497m7tn`) → API → **Webhooks** → crea:
+   - URL: la del build hook
+   - Dataset: `production`
+   - Trigger on: Create, Update, Delete
+3. A partir d'aquí, cada Publish a l'Studio regenera la web sola (~1 min).

@@ -2,24 +2,39 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { sanity, queries } from '../lib/sanity';
 
-const recorreguts = [
-  {
-    nom: 'Cursa del Fau 24 km',
-    preu: '24€',
-    dades: ['Circular 24 km, cim al Fau', '1200 m positius', 'Sortida / arribada Camp de Futbol'],
-  },
-  {
-    nom: 'Puja i baixa 18 km',
-    preu: '22€',
-    dades: ['Circular 18 km, cim al Fau', '950 m positius', 'Sortida / arribada Camp de Futbol'],
-  },
-  {
-    nom: 'Entre Aigües 9 km',
-    preu: '19€',
-    dades: ['Circular 9 km', '400 m positius', 'Ideal per iniciar-se'],
-  },
+type Recorregut = {
+  nom: string;
+  slug?: string;
+  distanciaKm?: number;
+  desnivell?: number;
+  preu?: number;
+};
+
+const mocks: Recorregut[] = [
+  { nom: 'Cursa del Fau 24 km', distanciaKm: 24, desnivell: 1200, preu: 24 },
+  { nom: 'Puja i baixa 18 km', distanciaKm: 18, desnivell: 950, preu: 22 },
+  { nom: 'Entre Aigües 9 km', distanciaKm: 9, desnivell: 400, preu: 19 },
 ];
+
+let edicio: { any?: number; data?: string } | null = null;
+let recorreguts: Recorregut[] = mocks;
+let fromSanity = false;
+
+try {
+  const [ed, recs] = await Promise.all([
+    sanity.fetch(queries.edicioActual),
+    sanity.fetch<Recorregut[]>(queries.recorreguts),
+  ]);
+  if (ed) edicio = ed;
+  if (recs?.length) {
+    recorreguts = recs;
+    fromSanity = true;
+  }
+} catch {
+  // Sense connexió: mostrem mocks
+}
 ---
 <Layout>
   <Header />
@@ -47,18 +62,31 @@ const recorreguts = [
     </section>
 
     <section id="curses" class="mx-auto max-w-6xl px-4 py-10">
-      <h2 class="text-2xl font-bold">Recorreguts</h2>
+      <h2 class="text-2xl font-bold">
+        Recorreguts {edicio?.any ? <span class="text-stone-400">· Edició {edicio.any}</span> : null}
+      </h2>
+      {!fromSanity && (
+        <p class="mt-1 text-xs text-amber-600">Mostrant dades de mostra (Sanity no disponible en build).</p>
+      )}
       <div class="mt-6 grid gap-4 md:grid-cols-3">
         {recorreguts.map((r) => (
           <article class="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
             <h3 class="text-lg font-bold">{r.nom}</h3>
-            <p class="mt-1 text-3xl font-black text-emerald-700">{r.preu}</p>
+            <p class="mt-1 text-3xl font-black text-emerald-700">{r.preu}€</p>
             <ul class="mt-4 space-y-2 text-sm text-stone-600">
-              {r.dades.map((d) => <li>• {d}</li>)}
+              <li>• {r.distanciaKm} km circular</li>
+              <li>• {r.desnivell} m positius</li>
+              <li>• Sortida / arribada Camp de Futbol</li>
             </ul>
-            <a href="#inscripcions" class="mt-6 inline-block font-semibold text-emerald-700 underline">
-              Informació →
-            </a>
+            {r.slug ? (
+              <a href={`/recorregut/${r.slug}`} class="mt-6 inline-block font-semibold text-emerald-700 underline">
+                Informació →
+              </a>
+            ) : (
+              <a href="#inscripcions" class="mt-6 inline-block font-semibold text-emerald-700 underline">
+                Informació →
+              </a>
+            )}
           </article>
         ))}
       </div>
