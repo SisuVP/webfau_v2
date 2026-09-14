@@ -17,12 +17,12 @@ export function urlFor(source: any) {
 export const queries = {
   edicioActual: `*[_type == "edicio" && estat == "actual"][0]{
     any, data,
-    recorreguts[]->{nom, "slug": slug.current, distanciaKm, desnivell, preu}
+    recorreguts[]->{nom, "slug": slug.current, distanciaKm, desnivell, preu, puntSortida}
   }`,
-  recorreguts: `*[_type == "recorregut"]{nom, "slug": slug.current, distanciaKm, desnivell, preu}`,
+  recorreguts: `*[_type == "recorregut"]{nom, "slug": slug.current, distanciaKm, desnivell, preu, puntSortida}`,
   recorregutSlugs: `*[_type == "recorregut" && defined(slug.current)]{"slug": slug.current}`,
   recorregutBySlug: `*[_type == "recorregut" && slug.current == $slug][0]{
-    nom, distanciaKm, desnivell, preu, descripcio
+    nom, distanciaKm, desnivell, preu, puntSortida, descripcio
   }`,
   sponsors: `*[_type == "sponsor"] | order(ordre asc){nom, url, categoria}`,
 };

@@ -20,6 +20,7 @@ const r = await sanity.fetch<{
   distanciaKm?: number;
   desnivell?: number;
   preu?: number;
+  puntSortida?: string;
   descripcio?: any[];
 }>(queries.recorregutBySlug, { slug });
 
@@ -56,6 +57,9 @@ const paragraphs = (r.descripcio ?? []).map(blockText).filter(Boolean);
     {paragraphs.map((p) => (
       <p class="mt-4 text-stone-700">{p}</p>
     ))}
+    {r.puntSortida && (
+      <p class="mt-4 text-sm text-stone-600">📍 Sortida / arribada: {r.puntSortida}</p>
+    )}
     <a
       href="/#inscripcions"
       class="mt-8 inline-block rounded-full bg-emerald-700 px-6 py-3 font-semibold text-white hover:bg-emerald-800"

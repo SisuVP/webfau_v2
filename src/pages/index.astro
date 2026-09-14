@@ -10,6 +10,7 @@ type Recorregut = {
   distanciaKm?: number;
   desnivell?: number;
   preu?: number;
+  puntSortida?: string;
 };
 
 const mocks: Recorregut[] = [
@@ -76,7 +77,7 @@ try {
             <ul class="mt-4 space-y-2 text-sm text-stone-600">
               <li>• {r.distanciaKm} km circular</li>
               <li>• {r.desnivell} m positius</li>
-              <li>• Sortida / arribada Camp de Futbol</li>
+              <li>• Sortida / arribada {r.puntSortida ?? 'Camp de Futbol'}</li>
             </ul>
             {r.slug ? (
               <a href={`/recorregut/${r.slug}`} class="mt-6 inline-block font-semibold text-emerald-700 underline">
