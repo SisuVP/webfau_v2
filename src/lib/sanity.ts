@@ -16,7 +16,7 @@ export function urlFor(source: any) {
 
 export const queries = {
   edicioActual: `*[_type == "edicio" && estat == "actual"][0]{
-    any, data,
+    any, data, programa, reglament,
     recorreguts[]->{nom, "slug": slug.current, distanciaKm, desnivell, preu, puntSortida}
   }`,
   recorreguts: `*[_type == "recorregut"]{nom, "slug": slug.current, distanciaKm, desnivell, preu, puntSortida}`,
@@ -24,5 +24,5 @@ export const queries = {
   recorregutBySlug: `*[_type == "recorregut" && slug.current == $slug][0]{
     nom, distanciaKm, desnivell, preu, puntSortida, descripcio
   }`,
-  sponsors: `*[_type == "sponsor"] | order(ordre asc){nom, url, categoria}`,
+  sponsors: `*[_type == "sponsor"] | order(ordre asc){nom, url, categoria, "logoUrl": logo.asset->url}`,
 };

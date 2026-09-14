@@ -1,0 +1,11 @@
+---
+import { toHTML } from '@portabletext/to-html';
+
+interface Props {
+  value?: any[];
+}
+
+const { value = [] } = Astro.props;
+const html = toHTML(value);
+---
+<div class="richtext" set:html={html} />
