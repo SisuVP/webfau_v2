@@ -1,0 +1,26 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+}
+import '../styles/global.css';
+
+const {
+  title = 'Cursa del Fau — Més que una cursa de muntanya',
+  description = 'Cursa de muntanya a Maçanet de Cabrenys. 24km, 18km i 9km. Próxima edició: 9 d’agost de 2026.',
+} = Astro.props;
+---
+<!doctype html>
+<html lang="ca">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+  </head>
+  <body class="bg-stone-50 text-stone-900 antialiased">
+    <slot />
+  </body>
+</html>
