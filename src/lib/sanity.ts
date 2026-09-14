@@ -27,6 +27,8 @@ export const queries = {
     nom, distanciaKm, desnivell, preu, puntSortida, descripcio, "imatgeUrl": imatge.asset->url
   }`,
   sponsors: `*[_type == "sponsor"] | order(ordre asc){nom, url, categoria, "logoUrl": logo.asset->url}`,
+  edicionsResultats: `*[_type == "edicio"] | order(any desc){any, resultatsEmbed}`,
+  edicionsGaleries: `*[_type == "edicio"] | order(any desc){any, galeries[]{titol, url, "portadaUrl": portada.asset->url}}`,
   paginaSlugs: `*[_type == "pagina" && defined(slug.current)]{"slug": slug.current}`,
   paginaBySlug: `*[_type == "pagina" && slug.current == $slug][0]{titol, cos, embedUrl}`,
   paginesMenu: `*[_type == "pagina" && defined(slug.current) && mostraAlMenu == true] | order(ordre asc){titol, "slug": slug.current}`,

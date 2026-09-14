@@ -1,0 +1,40 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { sanity, queries } from '../lib/sanity';
+
+type Galeria = { titol?: string; url?: string; portadaUrl?: string };
+const edicions = await sanity.fetch<{ any: number; galeries?: Galeria[] }[]>(
+  queries.edicionsGaleries,
+);
+const ambGaleries = edicions.filter((e) => e.galeries?.length);
+---
+<Layout title="Imatges — Cursa del Fau">
+  <Header />
+  <main class="mx-auto max-w-6xl px-4 py-12">
+    <p><a href="/" class="text-sm text-emerald-700 underline">← Inici</a></p>
+    <h1 class="mt-2 text-4xl font-black">Imatges</h1>
+    {ambGaleries.length === 0 && (
+      <p class="mt-4 text-stone-600">Encara no hi ha galeries publicades.</p>
+    )}
+    {ambGaleries.map((e) => (
+      <section class="mt-10">
+        <h2 class="text-2xl font-bold">Edició {e.any}</h2>
+        <ul class="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+          {(e.galeries ?? []).map((g) => (
+            <li class="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
+              <a href={g.url} target="_blank" rel="noopener" title={g.titol}>
+                {g.portadaUrl && (
+                  <img src={`${g.portadaUrl}?w=800&auto=format`} alt={g.titol ?? ''} loading="lazy" class="h-48 w-full object-cover" />
+                )}
+                <p class="p-4 text-center text-sm font-semibold">{g.titol}</p>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+  </main>
+  <Footer />
+</Layout>

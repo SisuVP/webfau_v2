@@ -22,6 +22,27 @@ export const edicio = defineType({
     }),
     defineField({name: 'programa', title: 'Programa', type: 'array', of: [{type: 'block'}]}),
     defineField({name: 'reglament', title: 'Reglament', type: 'array', of: [{type: 'block'}]}),
+    defineField({
+      name: 'resultatsEmbed',
+      title: 'Resultats (URL incrustada)',
+      description: 'URL embed del cronometratge, ex. https://sportmaniacs.com/...',
+      type: 'url',
+    }),
+    defineField({
+      name: 'galeries',
+      title: 'Galeries d’imatges',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            defineField({name: 'titol', title: 'Títol', type: 'string'}),
+            defineField({name: 'url', title: 'URL àlbum extern', type: 'url'}),
+            defineField({name: 'portada', title: 'Foto portada', type: 'image', options: {hotspot: true}}),
+          ],
+        },
+      ],
+    }),
   ],
   preview: {
     select: {title: 'any', subtitle: 'data'},
