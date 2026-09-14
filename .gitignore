@@ -8,6 +8,9 @@ studio/dist/
 studio/.sanity/
 # carpeta temporal de migració (imatges descarregades de la web vella)
 migracio-imatges/
+# fitxers temporals de scraping
+tmp-*.html
+check-*.mjs
 
 # dependencies
 node_modules/
