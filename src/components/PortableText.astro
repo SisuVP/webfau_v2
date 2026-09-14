@@ -1,11 +1,24 @@
 ---
 import { toHTML } from '@portabletext/to-html';
+import { urlFor } from '../lib/sanity';
 
 interface Props {
   value?: any[];
 }
 
 const { value = [] } = Astro.props;
-const html = toHTML(value);
+
+const html = toHTML(value, {
+  components: {
+    types: {
+      image: ({ value }: any) => {
+        if (!value?.asset) return '';
+        const url = urlFor(value).width(1200).auto('format').url();
+        const alt = value.alt ?? '';
+        return `<img src="${url}" alt="${alt}" loading="lazy" style="border-radius:1rem;margin:1rem 0;" />`;
+      },
+    },
+  },
+});
 ---
 <div class="richtext" set:html={html} />
