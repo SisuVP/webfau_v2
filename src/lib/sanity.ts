@@ -5,7 +5,9 @@ export const sanity = createClient({
   projectId: import.meta.env.PUBLIC_SANITY_PROJECT_ID ?? 'e497m7tn',
   dataset: import.meta.env.PUBLIC_SANITY_DATASET ?? 'production',
   apiVersion: '2026-01-01',
-  useCdn: true,
+  // Sense CDN: el build (local o webhook) sempre llegeix dades fresques
+  // just després de publicar. El HTML final ja queda cachejat a Cloudflare.
+  useCdn: false,
 });
 
 const builder = createImageUrlBuilder(sanity);
