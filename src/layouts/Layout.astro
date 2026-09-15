@@ -2,12 +2,14 @@
 interface Props {
   title?: string;
   description?: string;
+  image?: string;
 }
 import '../styles/global.css';
 
 const {
   title = 'Cursa del Fau — Més que una cursa de muntanya',
   description = 'Cursa de muntanya a Maçanet de Cabrenys. 24km, 18km i 9km. 9 d’agost de 2026.',
+  image,
 } = Astro.props;
 ---
 <!doctype html>
@@ -25,6 +27,15 @@ const {
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="ca_ES" />
+    {image && (
+      <>
+        <meta property="og:image" content={image} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={image} />
+      </>
+    )}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

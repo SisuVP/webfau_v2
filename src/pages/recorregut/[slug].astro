@@ -35,6 +35,7 @@ const r = await sanity.fetch<{
   talls?: Tall[];
   mapaEmbedUrl?: string;
   perfilUrl?: string;
+  imatgeUrl?: string;
 }>(queries.recorregutBySlug, { slug });
 
 if (!r) {
@@ -50,7 +51,11 @@ const fitxa: [string, string][] = [
   ['Preu', r.preu != null ? `${r.preu}€` : '—'],
 ];
 ---
-<Layout title={`${r.nom} — Cursa del Fau`}>
+<Layout
+  title={`${r.nom} — Cursa del Fau`}
+  description={`${r.nom}: ${r.distanciaKm ?? ''} km i ${r.desnivell ?? ''} m positius a Maçanet de Cabrenys.`}
+  image={r.imatgeUrl ? `${r.imatgeUrl}?w=1200&auto=format` : undefined}
+>
   <Header />
   <div class="bg-stone-100 pt-24 text-stone-900">
   <main class="mx-auto max-w-3xl px-4 py-10">

@@ -81,8 +81,9 @@ const heroFons = edicio?.heroFonsUrl ?? recorreguts.find((r) => r.imatgeUrl)?.im
 // Es calcula al build i es revalida al navegador per si el build ha quedat desfasat.
 const llindarCursa = edicio?.data ? new Date(`${edicio.data}T12:00:00`) : null;
 const cursaPassadaBuild = llindarCursa ? Date.now() >= llindarCursa.getTime() : false;
+const ogImage = edicio?.cartellUrl ?? heroFons;
 ---
-<Layout>
+<Layout image={ogImage ? `${ogImage}?w=1200&auto=format` : undefined}>
   <Header />
 
   <main>
