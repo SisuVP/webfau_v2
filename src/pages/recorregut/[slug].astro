@@ -50,11 +50,28 @@ const fitxa: [string, string][] = [
   ['Temps màxim', r.tempsMaxim ?? '—'],
   ['Preu', r.preu != null ? `${r.preu}€` : '—'],
 ];
+
+const SITE = import.meta.env.SITE_URL ?? 'https://cursadelfau.org';
+const jsonLdRec = {
+  '@context': 'https://schema.org',
+  '@type': 'SportsEvent',
+  name: `${r.nom} — Cursa del Fau`,
+  sport: 'Trail running',
+  location: {
+    '@type': 'Place',
+    name: 'Maçanet de Cabrenys',
+    address: { '@type': 'PostalAddress', addressLocality: 'Maçanet de Cabrenys', addressRegion: 'Catalunya', addressCountry: 'ES' },
+  },
+  url: `${SITE}/recorregut/${slug}`,
+  ...(r.imatgeUrl ? { image: `${r.imatgeUrl}?w=1200&auto=format` } : {}),
+  ...(r.preu != null ? { offers: { '@type': 'Offer', price: r.preu, priceCurrency: 'EUR' } } : {}),
+};
 ---
 <Layout
   title={`${r.nom} — Cursa del Fau`}
   description={`${r.nom}: ${r.distanciaKm ?? ''} km i ${r.desnivell ?? ''} m positius a Maçanet de Cabrenys.`}
   image={r.imatgeUrl ? `${r.imatgeUrl}?w=1200&auto=format` : undefined}
+  jsonLd={jsonLdRec}
 >
   <Header />
   <div class="bg-stone-100 pt-24 text-stone-900">

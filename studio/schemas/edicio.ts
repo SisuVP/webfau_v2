@@ -6,7 +6,7 @@ export const edicio = defineType({
   type: 'document',
   fields: [
     defineField({name: 'any', title: 'Any', type: 'number', validation: (R) => R.required().min(2007)}),
-    defineField({name: 'data', title: 'Data cursa', type: 'date'}),
+    defineField({name: 'data', title: 'Data cursa', type: 'date', validation: (R) => R.required()}),
     defineField({
       name: 'estat',
       title: 'Estat',

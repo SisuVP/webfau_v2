@@ -82,8 +82,34 @@ const heroFons = edicio?.heroFonsUrl ?? recorreguts.find((r) => r.imatgeUrl)?.im
 const llindarCursa = edicio?.data ? new Date(`${edicio.data}T12:00:00`) : null;
 const cursaPassadaBuild = llindarCursa ? Date.now() >= llindarCursa.getTime() : false;
 const ogImage = edicio?.cartellUrl ?? heroFons;
+
+const SITE = import.meta.env.SITE_URL ?? 'https://cursadelfau.org';
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SportsEvent',
+  name: `Cursa del Fau ${anyEdicio}`,
+  description: 'Cursa de muntanya a Maçanet de Cabrenys: 24 km, 18 km i 9 km.',
+  startDate: edicio?.data ? `${edicio.data}T07:30:00` : undefined,
+  eventStatus: cursaPassadaBuild ? 'https://schema.org/EventCompleted' : 'https://schema.org/EventScheduled',
+  location: {
+    '@type': 'Place',
+    name: 'Camp de Futbol de Maçanet de Cabrenys',
+    address: { '@type': 'PostalAddress', addressLocality: 'Maçanet de Cabrenys', addressRegion: 'Catalunya', addressCountry: 'ES' },
+  },
+  organizer: { '@type': 'SportsOrganization', name: 'Club Excursionista Maçanetenc', url: SITE },
+  url: SITE,
+  ...(ogImage ? { image: `${ogImage}?w=1200&auto=format` } : {}),
+  subEvent: recorreguts
+    .filter((r) => r.slug && r.distanciaKm != null)
+    .map((r) => ({
+      '@type': 'SportsEvent',
+      name: r.nom,
+      url: `${SITE}/recorregut/${r.slug}`,
+      ...(r.preu != null ? { offers: { '@type': 'Offer', price: r.preu, priceCurrency: 'EUR' } } : {}),
+    })),
+};
 ---
-<Layout image={ogImage ? `${ogImage}?w=1200&auto=format` : undefined}>
+<Layout image={ogImage ? `${ogImage}?w=1200&auto=format` : undefined} jsonLd={jsonLd}>
   <Header />
 
   <main>

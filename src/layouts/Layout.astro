@@ -3,6 +3,7 @@ interface Props {
   title?: string;
   description?: string;
   image?: string;
+  jsonLd?: Record<string, unknown>;
 }
 import '../styles/global.css';
 
@@ -10,6 +11,7 @@ const {
   title = 'Cursa del Fau — Més que una cursa de muntanya',
   description = 'Cursa de muntanya a Maçanet de Cabrenys. 24km, 18km i 9km. 9 d’agost de 2026.',
   image,
+  jsonLd,
 } = Astro.props;
 ---
 <!doctype html>
@@ -38,6 +40,9 @@ const {
     )}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    {jsonLd && (
+      <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    )}
     <link
       href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
