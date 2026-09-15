@@ -60,7 +60,7 @@ const fitxa: [string, string][] = [
       <p class="mt-2 text-sm font-semibold uppercase tracking-widest text-stone-500">{r.perA}</p>
     )}
 
-    <section class="mt-6 rounded-2xl bg-night-900 p-6 text-white md:p-8">
+    <section class="mt-6 rounded-lg bg-night-900 p-6 text-white md:p-8">
       <h2 class="font-display text-xl font-bold uppercase tracking-wide text-fau-400">Fitxa tècnica</h2>
       <dl class="mt-4 grid grid-cols-2 gap-x-6 gap-y-3 text-sm md:grid-cols-3">
         {fitxa.map(([dt, dd]) => (
@@ -76,13 +76,13 @@ const fitxa: [string, string][] = [
     </section>
 
     {r.descripcio?.length ? (
-      <div class="mt-6 rounded-2xl border border-stone-200 bg-white p-8">
+      <div class="mt-6 rounded-lg border border-stone-200 bg-white p-8">
         <PortableText value={r.descripcio} />
       </div>
     ) : null}
 
     {(r.avituallaments?.length ?? 0) > 0 && (
-      <section class="mt-6 rounded-2xl border border-stone-200 bg-white p-8">
+      <section class="mt-6 rounded-lg border border-stone-200 bg-white p-8">
         <h2 class="font-display text-xl font-bold uppercase tracking-wide">Avituallaments</h2>
         <ol class="mt-4 space-y-2">
           {(r.avituallaments ?? []).map((a) => (
@@ -96,7 +96,7 @@ const fitxa: [string, string][] = [
     )}
 
     {(r.talls?.length ?? 0) > 0 && (
-      <section class="mt-6 rounded-2xl border border-amber-300 bg-amber-50 p-8">
+      <section class="mt-6 rounded-lg border border-amber-300 bg-amber-50 p-8">
         <h2 class="font-display text-xl font-bold uppercase tracking-wide">Temps de tall</h2>
         <ul class="mt-4 space-y-2 text-sm">
           {(r.talls ?? []).map((t) => (
@@ -109,7 +109,7 @@ const fitxa: [string, string][] = [
     {r.mapaEmbedUrl && (
       <section class="mt-6">
         <h2 class="font-display text-xl font-bold uppercase tracking-wide">Recorregut</h2>
-        <div class="mt-4 overflow-hidden rounded-2xl border border-stone-200">
+        <div class="mt-4 overflow-hidden rounded-lg border border-stone-200">
           <iframe src={r.mapaEmbedUrl} width="100%" height="480" style="border:0" loading="lazy" title={`Mapa ${r.nom}`} />
         </div>
         <p class="mt-1 text-right text-xs text-stone-400">Powered by Wikiloc</p>
@@ -123,7 +123,7 @@ const fitxa: [string, string][] = [
           src={`${r.perfilUrl}?w=1400&auto=format`}
           alt={`Perfil ${r.nom}`}
           loading="lazy"
-          class="mt-4 w-full rounded-2xl border border-stone-200 bg-white shadow"
+          class="mt-4 w-full rounded-lg border border-stone-200 bg-white shadow"
         />
       </section>
     )}
