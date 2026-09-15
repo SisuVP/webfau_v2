@@ -16,6 +16,9 @@ export async function getStaticPaths() {
 
 const { slug } = Astro.params;
 
+type Avit = { punt?: string; km?: number };
+type Tall = { punt?: string; horaLimit?: string };
+
 const r = await sanity.fetch<{
   nom: string;
   distanciaKm?: number;
@@ -24,11 +27,29 @@ const r = await sanity.fetch<{
   puntSortida?: string;
   descripcio?: any[];
   imatgeUrl?: string;
+  perA?: string;
+  horaSortida?: string;
+  tempsMaxim?: string;
+  alcadaMin?: number;
+  alcadaMax?: number;
+  avituallaments?: Avit[];
+  talls?: Tall[];
+  mapaEmbedUrl?: string;
+  perfilUrl?: string;
 }>(queries.recorregutBySlug, { slug });
 
 if (!r) {
   return Astro.redirect('/');
 }
+
+const fitxa: [string, string][] = [
+  ['Distància', r.distanciaKm != null ? `${r.distanciaKm} km` : '—'],
+  ['Desnivell +', r.desnivell != null ? `${r.desnivell} m` : '—'],
+  ['Alçada min.–màx.', r.alcadaMin != null && r.alcadaMax != null ? `${r.alcadaMin} – ${r.alcadaMax} m` : '—'],
+  ['Hora sortida', r.horaSortida ?? '—'],
+  ['Temps màxim', r.tempsMaxim ?? '—'],
+  ['Preu', r.preu != null ? `${r.preu}€` : '—'],
+];
 ---
 <Layout title={`${r.nom} — Cursa del Fau`}>
   <Header />
@@ -36,6 +57,9 @@ if (!r) {
   <main class="mx-auto max-w-3xl px-4 py-10">
     <p><a href="/#curses" class="text-sm font-semibold text-fau-600 underline">← Recorreguts</a></p>
     <h1 class="font-display mt-2 text-4xl font-bold md:text-5xl">{r.nom}</h1>
+    {r.perA && (
+      <p class="mt-2 text-sm font-semibold uppercase tracking-widest text-stone-500">{r.perA}</p>
+    )}
     {r.imatgeUrl && (
       <img
         src={`${r.imatgeUrl}?w=1200&auto=format`}
@@ -44,28 +68,75 @@ if (!r) {
         class="mt-6 w-full rounded-2xl object-cover shadow"
       />
     )}
-    <dl class="mt-6 grid grid-cols-3 gap-4">
-      <div class="rounded-xl bg-white p-4 text-center shadow-sm">
-        <dt class="text-xs uppercase text-stone-500">Distància</dt>
-        <dd class="text-2xl font-bold">{r.distanciaKm} km</dd>
-      </div>
-      <div class="rounded-xl bg-white p-4 text-center shadow-sm">
-        <dt class="text-xs uppercase text-stone-500">Desnivell</dt>
-        <dd class="text-2xl font-bold">{r.desnivell} m</dd>
-      </div>
-      <div class="rounded-xl bg-white p-4 text-center shadow-sm">
-        <dt class="text-xs uppercase text-stone-500">Preu</dt>
-        <dd class="text-2xl font-bold text-fau-600">{r.preu}€</dd>
-      </div>
-    </dl>
+
+    <section class="mt-6 rounded-2xl bg-night-900 p-6 text-white md:p-8">
+      <h2 class="font-display text-xl font-bold uppercase tracking-wide text-fau-400">Fitxa tècnica</h2>
+      <dl class="mt-4 grid grid-cols-2 gap-x-6 gap-y-3 text-sm md:grid-cols-3">
+        {fitxa.map(([dt, dd]) => (
+          <div>
+            <dt class="text-xs uppercase tracking-wider text-stone-400">{dt}</dt>
+            <dd class="text-lg font-bold">{dd}</dd>
+          </div>
+        ))}
+      </dl>
+      {r.puntSortida && (
+        <p class="mt-4 text-sm text-stone-300">📍 Sortida / arribada: {r.puntSortida}</p>
+      )}
+    </section>
+
     {r.descripcio?.length ? (
       <div class="mt-6 rounded-2xl border border-stone-200 bg-white p-8">
         <PortableText value={r.descripcio} />
       </div>
     ) : null}
-    {r.puntSortida && (
-      <p class="mt-4 text-sm text-stone-600">📍 Sortida / arribada: {r.puntSortida}</p>
+
+    {(r.avituallaments?.length ?? 0) > 0 && (
+      <section class="mt-6 rounded-2xl border border-stone-200 bg-white p-8">
+        <h2 class="font-display text-xl font-bold uppercase tracking-wide">Avituallaments</h2>
+        <ol class="mt-4 space-y-2">
+          {(r.avituallaments ?? []).map((a) => (
+            <li class="flex items-baseline justify-between gap-4 border-b border-dashed border-stone-200 pb-2 text-sm">
+              <span class="font-medium">{a.punt}</span>
+              {a.km != null && <span class="font-bold text-fau-600">km {a.km}</span>}
+            </li>
+          ))}
+        </ol>
+      </section>
     )}
+
+    {(r.talls?.length ?? 0) > 0 && (
+      <section class="mt-6 rounded-2xl border border-amber-300 bg-amber-50 p-8">
+        <h2 class="font-display text-xl font-bold uppercase tracking-wide">Temps de tall</h2>
+        <ul class="mt-4 space-y-2 text-sm">
+          {(r.talls ?? []).map((t) => (
+            <li>⏱️ <strong>{t.punt}</strong>{t.horaLimit ? ` — límit ${t.horaLimit}` : ''}</li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    {r.mapaEmbedUrl && (
+      <section class="mt-6">
+        <h2 class="font-display text-xl font-bold uppercase tracking-wide">Recorregut</h2>
+        <div class="mt-4 overflow-hidden rounded-2xl border border-stone-200">
+          <iframe src={r.mapaEmbedUrl} width="100%" height="480" style="border:0" loading="lazy" title={`Mapa ${r.nom}`} />
+        </div>
+        <p class="mt-1 text-right text-xs text-stone-400">Powered by Wikiloc</p>
+      </section>
+    )}
+
+    {r.perfilUrl && (
+      <section class="mt-6">
+        <h2 class="font-display text-xl font-bold uppercase tracking-wide">Perfil</h2>
+        <img
+          src={`${r.perfilUrl}?w=1400&auto=format`}
+          alt={`Perfil ${r.nom}`}
+          loading="lazy"
+          class="mt-4 w-full rounded-2xl border border-stone-200 bg-white shadow"
+        />
+      </section>
+    )}
+
     <a
       href="/pagina/inscripcions"
       class="font-display mt-8 inline-block rounded-full bg-fau-500 px-8 py-3 text-lg font-semibold uppercase tracking-wide text-night-950 transition hover:bg-fau-400"
