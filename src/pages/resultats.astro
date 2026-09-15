@@ -26,7 +26,7 @@ const teDades = (e: Edicio) => !!e.resultatsEmbed || (e.resultatsLinks?.length ?
 
     <div class="mt-8 space-y-6">
       {edicions.map((e) => (
-        <section class={`rounded-2xl border p-6 md:p-8 ${e.estat === 'actual' ? 'border-fau-500 bg-orange-50' : 'border-stone-200 bg-white'}`}>
+        <section class={`rounded-lg border p-6 md:p-8 ${e.estat === 'actual' ? 'border-fau-500 bg-orange-50' : 'border-stone-200 bg-white'}`}>
           <div class="flex flex-wrap items-center gap-3">
             <h2 class="font-display text-2xl font-bold">Edició {e.any}</h2>
             {e.estat === 'actual' && (
@@ -50,7 +50,7 @@ const teDades = (e: Edicio) => !!e.resultatsEmbed || (e.resultatsLinks?.length ?
                 </ul>
               )}
               {e.resultatsEmbed && (
-                <div class="mt-4 overflow-hidden rounded-xl border border-stone-200 bg-white">
+                <div class="mt-4 overflow-hidden rounded-lg border border-stone-200 bg-white">
                   <iframe src={e.resultatsEmbed} width="100%" height="800" style="border:0" loading="lazy" title={`Resultats ${e.any}`} />
                 </div>
               )}
