@@ -67,8 +67,8 @@ function teaser(blocks: any[] = [], maxChars = 300) {
   return out;
 }
 
-const programaTeaser = teaser(edicio?.programa);
-const reglamentTeaser = teaser(edicio?.reglament);
+const programaTeaser = teaser(edicio?.programa ?? []);
+const reglamentTeaser = teaser(edicio?.reglament ?? []);
 
 const anyEdicio = edicio?.any ?? 2026;
 const numEdicio = `${anyEdicio - 2007}a`;

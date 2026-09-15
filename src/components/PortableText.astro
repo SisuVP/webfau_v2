@@ -8,7 +8,7 @@ interface Props {
 
 const { value = [] } = Astro.props;
 
-const html = toHTML(value, {
+const html = toHTML(value ?? [], {
   components: {
     types: {
       image: ({ value }: any) => {
