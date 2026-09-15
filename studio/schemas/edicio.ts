@@ -15,6 +15,13 @@ export const edicio = defineType({
     }),
     defineField({name: 'cartell', title: 'Cartell', type: 'image', options: {hotspot: true}}),
     defineField({
+      name: 'heroFons',
+      title: 'Imatge de fons de la portada',
+      description: 'Panoràmica ampla (mín. 2000px). Si és buida, s’usa la portada d’un recorregut.',
+      type: 'image',
+      options: {hotspot: true},
+    }),
+    defineField({
       name: 'recorreguts',
       title: 'Recorreguts',
       type: 'array',

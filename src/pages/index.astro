@@ -32,7 +32,7 @@ const mocks: Recorregut[] = [
   { nom: 'Entre Aigües 9 km', distanciaKm: 9, desnivell: 400, preu: 19 },
 ];
 
-let edicio: { any?: number; data?: string; programa?: any[]; reglament?: any[]; cartellUrl?: string } | null = null;
+let edicio: { any?: number; data?: string; programa?: any[]; reglament?: any[]; cartellUrl?: string; heroFonsUrl?: string } | null = null;
 let recorreguts: Recorregut[] = mocks;
 let sponsors: Sponsor[] = [];
 let fromSanity = false;
@@ -75,7 +75,7 @@ const numEdicio = `${anyEdicio - 2007}a`;
 const dataFormatejada = edicio?.data
   ? new Date(edicio.data + 'T00:00:00').toLocaleDateString('ca-ES', { day: 'numeric', month: 'long', year: 'numeric' })
   : '9 d’agost de 2026';
-const heroFons = recorreguts.find((r) => r.imatgeUrl)?.imatgeUrl;
+const heroFons = edicio?.heroFonsUrl ?? recorreguts.find((r) => r.imatgeUrl)?.imatgeUrl;
 ---
 <Layout>
   <Header />

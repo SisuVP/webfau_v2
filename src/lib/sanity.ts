@@ -18,7 +18,7 @@ export function urlFor(source: any) {
 
 export const queries = {
   edicioActual: `*[_type == "edicio" && estat == "actual"][0]{
-    any, data, programa, reglament, "cartellUrl": cartell.asset->url,
+    any, data, programa, reglament, "cartellUrl": cartell.asset->url, "heroFonsUrl": heroFons.asset->url,
     recorreguts[]->{nom, "slug": slug.current, distanciaKm, desnivell, preu, puntSortida, "imatgeUrl": imatge.asset->url}
   }`,
   recorreguts: `*[_type == "recorregut"]{nom, "slug": slug.current, distanciaKm, desnivell, preu, puntSortida, "imatgeUrl": imatge.asset->url}`,
