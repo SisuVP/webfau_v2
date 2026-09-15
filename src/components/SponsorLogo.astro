@@ -6,11 +6,11 @@ interface Props {
 const { s, gran = false } = Astro.props;
 const fosc = !!s.targetaFosca;
 ---
-<li class={`flex ${gran ? 'min-h-36' : 'min-h-28'} items-center justify-center rounded-xl border p-5 transition hover:shadow-md ${fosc ? 'border-white/10 bg-night-900' : 'border-stone-200 bg-white'}`}>
+<li class={`flex ${gran ? 'min-h-24' : 'min-h-20'} items-center justify-center rounded-lg border p-3 transition hover:shadow-md ${fosc ? 'border-white/10 bg-night-900' : 'border-stone-200 bg-white'}`}>
   {s.url ? (
     <a href={s.url} target="_blank" rel="noopener" title={s.nom} class="flex h-full w-full items-center justify-center">
       {s.logoUrl ? (
-        <img src={`${s.logoUrl}?w=${gran ? '700' : '500'}&auto=format`} alt={s.nom} loading="lazy" class={`${gran ? 'max-h-28' : 'max-h-20'} w-auto max-w-full object-contain`} />
+        <img src={`${s.logoUrl}?w=${gran ? '600' : '400'}&auto=format`} alt={s.nom} loading="lazy" class={`${gran ? 'max-h-16' : 'max-h-12'} w-auto max-w-full object-contain`} />
       ) : (
         <span class={`text-center text-sm font-semibold ${fosc ? 'text-white' : ''}`}>{s.nom}</span>
       )}
