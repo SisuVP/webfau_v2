@@ -29,7 +29,7 @@ export const queries = {
     avituallaments[]{punt, km}, talls[]{punt, horaLimit},
     mapaEmbedUrl, "perfilUrl": perfil.asset->url
   }`,
-  sponsors: `*[_type == "sponsor"] | order(ordre asc){nom, url, categoria, targetaFosca, colorFons, "logoUrl": logo.asset->url}`,
+  sponsors: `*[_type == "sponsor"] | order(ordre asc){nom, url, categoria, targetaFosca, colorFons, colorHex, "logoUrl": logo.asset->url}`,
   edicionsResultats: `*[_type == "edicio"] | order(any desc){any, estat, resultatsEmbed, resultatsLinks[]{titol, url}}`,
   edicionsGaleries: `*[_type == "edicio"] | order(any desc){any, galeries[]{titol, url, "portadaUrl": portada.asset->url}}`,
   paginaSlugs: `*[_type == "pagina" && defined(slug.current)]{"slug": slug.current}`,

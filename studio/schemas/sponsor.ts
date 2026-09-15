@@ -18,7 +18,7 @@ export const sponsor = defineType({
     defineField({
       name: 'colorFons',
       title: 'Color de fons de la targeta',
-      description: 'Tria el fons que faci més visible el logo.',
+      description: 'Tria un preset o escriu un hex a sota (té prioritat).',
       type: 'string',
       options: {
         list: [
@@ -29,6 +29,17 @@ export const sponsor = defineType({
         ],
       },
       initialValue: 'blanc',
+    }),
+    defineField({
+      name: 'colorHex',
+      title: 'Color hex personalitzat',
+      description: 'Opcional. Ex. #dd9933. Si l’omples, mana sobre el preset.',
+      type: 'string',
+      validation: (R) =>
+        R.custom((v) => {
+          if (!v) return true;
+          return /^#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$/.test(v) ? true : 'Cal un hex tipus #dd9933';
+        }),
     }),
   ],
 })

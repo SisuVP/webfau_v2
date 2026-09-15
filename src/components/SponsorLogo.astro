@@ -1,38 +1,50 @@
 ---
 interface Props {
-  s: { nom: string; url?: string; logoUrl?: string; targetaFosca?: boolean; colorFons?: string };
+  s: { nom: string; url?: string; logoUrl?: string; targetaFosca?: boolean; colorFons?: string; colorHex?: string };
   gran?: boolean;
 }
 const { s, gran = false } = Astro.props;
 
 // Compatibilitat: l'antic interruptor targetaFosca equival a fons negre
-const color = s.colorFons ?? (s.targetaFosca ? 'negre' : 'blanc');
+const preset = s.colorFons ?? (s.targetaFosca ? 'negre' : 'blanc');
 
-const fons: Record<string, string> = {
-  blanc: 'border-stone-200 bg-white',
-  negre: 'border-white/10 bg-night-900',
-  taronja: 'border-fau-600 bg-fau-500',
-  gris: 'border-stone-200 bg-stone-200',
+const presets: Record<string, { bg: string; fg: string; border: string }> = {
+  blanc: { bg: '#ffffff', fg: '', border: '#e7e5e4' },
+  negre: { bg: '#0b100e', fg: '#ffffff', border: 'rgba(255,255,255,0.12)' },
+  taronja: { bg: '#dd9933', fg: '#0b100e', border: '#96600f' },
+  gris: { bg: '#e7e5e4', fg: '', border: '#d6d3d1' },
 };
-const text: Record<string, string> = {
-  blanc: '',
-  negre: 'text-white',
-  taronja: 'text-night-950',
-  gris: '',
-};
-const estil = fons[color] ?? fons.blanc;
-const textEstil = text[color] ?? '';
+
+function hexLlum(hex: string): number {
+  const h = hex.replace('#', '');
+  const f = h.length === 3 ? h.split('').map((c) => c + c).join('') : h;
+  const r = parseInt(f.slice(0, 2), 16) || 0;
+  const g = parseInt(f.slice(2, 4), 16) || 0;
+  const b = parseInt(f.slice(4, 6), 16) || 0;
+  return (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+}
+
+const base = presets[preset] ?? presets.blanc;
+let estil = `background-color:${base.bg};border-color:${base.border};`;
+let textEstil = base.fg ? `color:${base.fg};` : '';
+
+const hexOk = s.colorHex && /^#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$/.test(s.colorHex);
+if (hexOk && s.colorHex) {
+  const clar = hexLlum(s.colorHex) > 0.6;
+  estil = `background-color:${s.colorHex};border-color:${clar ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.14)'};`;
+  textEstil = clar ? 'color:#0b100e;' : 'color:#ffffff;';
+}
 ---
-<li class={`${gran ? '' : 'w-full max-w-60 justify-self-center'} flex ${gran ? 'min-h-28' : 'min-h-24'} items-center justify-center rounded-lg border p-3 transition hover:shadow-md ${estil}`}>
+<li class={`${gran ? '' : 'w-full max-w-60 justify-self-center'} flex ${gran ? 'min-h-28' : 'min-h-24'} items-center justify-center rounded-lg border p-3 transition hover:shadow-md`} style={estil}>
   {s.url ? (
     <a href={s.url} target="_blank" rel="noopener" title={s.nom} class="flex h-full w-full items-center justify-center">
       {s.logoUrl ? (
         <img src={`${s.logoUrl}?w=${gran ? '600' : '400'}&auto=format`} alt={s.nom} loading="lazy" class={`${gran ? 'h-20' : 'h-16'} w-auto max-w-full object-contain`} />
       ) : (
-        <span class={`text-center text-sm font-semibold ${textEstil}`}>{s.nom}</span>
+        <span class="text-center text-sm font-semibold" style={textEstil}>{s.nom}</span>
       )}
     </a>
   ) : (
-    <span class={`text-center text-sm font-semibold ${textEstil}`}>{s.nom}</span>
+    <span class="text-center text-sm font-semibold" style={textEstil}>{s.nom}</span>
   )}
 </li>
