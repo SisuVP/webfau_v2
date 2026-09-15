@@ -15,5 +15,12 @@ export const sponsor = defineType({
       options: {list: ['principal', 'colaborador', 'institucional']},
     }),
     defineField({name: 'ordre', title: 'Ordre', type: 'number'}),
+    defineField({
+      name: 'targetaFosca',
+      title: 'Targeta fosca',
+      description: 'Activa-ho si el logo és blanc o molt clar i no es veu sobre fons blanc.',
+      type: 'boolean',
+      initialValue: false,
+    }),
   ],
 })

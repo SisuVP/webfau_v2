@@ -21,6 +21,7 @@ type Sponsor = {
   url?: string;
   categoria?: string;
   logoUrl?: string;
+  targetaFosca?: boolean;
 };
 
 const mocks: Recorregut[] = [
@@ -218,7 +219,7 @@ const heroFons = recorreguts.find((r) => r.imatgeUrl)?.imatgeUrl;
               {groups.colaboradors.length > 0 && (
                 <>
                   <p class="mt-8 text-xs font-bold uppercase tracking-[0.2em] text-stone-500">Col·laboradors</p>
-                  <ul class="mt-3 grid grid-cols-2 items-center gap-4 md:grid-cols-5">
+                  <ul class="mt-3 grid grid-cols-2 items-stretch gap-4 md:grid-cols-4">
                     {groups.colaboradors.map((s) => (
                       <SponsorLogo s={s} />
                     ))}
