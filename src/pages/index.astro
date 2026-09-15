@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import PortableText from '../components/PortableText.astro';
+import SponsorLogo from '../components/SponsorLogo.astro';
 import { sanity, queries } from '../lib/sanity';
 
 type Recorregut = {
@@ -201,23 +202,35 @@ const heroFons = recorreguts.find((r) => r.imatgeUrl)?.imatgeUrl;
       <p class="font-display text-sm font-semibold uppercase tracking-[0.25em] text-fau-600">Ho fan possible</p>
       <h2 class="font-display mt-1 text-3xl font-bold md:text-4xl">Amb el suport de</h2>
       {sponsors.length ? (
-        <ul class="mt-6 grid grid-cols-2 items-center gap-6 md:grid-cols-4">
-          {sponsors.map((s) => (
-            <li class="flex items-center justify-center rounded-xl border border-stone-200 bg-white p-4">
-              {s.url ? (
-                <a href={s.url} target="_blank" rel="noopener" title={s.nom}>
-                  {s.logoUrl ? (
-                    <img src={`${s.logoUrl}?w=400&auto=format`} alt={s.nom} loading="lazy" class="max-h-16 object-contain" />
-                  ) : (
-                    <span class="text-sm font-semibold">{s.nom}</span>
-                  )}
-                </a>
-              ) : (
-                <span class="text-sm font-semibold">{s.nom}</span>
+        <>
+          {((groups) => (
+            <>
+              {groups.institucions.length > 0 && (
+                <>
+                  <p class="mt-8 text-xs font-bold uppercase tracking-[0.2em] text-stone-500">Institucions</p>
+                  <ul class="mt-3 grid grid-cols-2 items-center gap-4 md:grid-cols-4">
+                    {groups.institucions.map((s) => (
+                      <SponsorLogo s={s} />
+                    ))}
+                  </ul>
+                </>
               )}
-            </li>
-          ))}
-        </ul>
+              {groups.colaboradors.length > 0 && (
+                <>
+                  <p class="mt-8 text-xs font-bold uppercase tracking-[0.2em] text-stone-500">Col·laboradors</p>
+                  <ul class="mt-3 grid grid-cols-2 items-center gap-4 md:grid-cols-5">
+                    {groups.colaboradors.map((s) => (
+                      <SponsorLogo s={s} />
+                    ))}
+                  </ul>
+                </>
+              )}
+            </>
+          ))({
+            institucions: sponsors.filter((s) => s.categoria !== 'colaborador'),
+            colaboradors: sponsors.filter((s) => s.categoria === 'colaborador' || !s.categoria),
+          })}
+        </>
       ) : (
         <p class="mt-2 text-sm text-stone-500">
           Pendent d'omplir: crea documents <strong>Sponsor</strong> a l'Studio (nom, logo, url, categoria, ordre).
