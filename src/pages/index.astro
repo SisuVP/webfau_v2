@@ -76,6 +76,11 @@ const dataFormatejada = edicio?.data
   ? new Date(edicio.data + 'T00:00:00').toLocaleDateString('ca-ES', { day: 'numeric', month: 'long', year: 'numeric' })
   : '9 d’agost de 2026';
 const heroFons = edicio?.heroFonsUrl ?? recorreguts.find((r) => r.imatgeUrl)?.imatgeUrl;
+
+// La cursa es considera acabada el mateix dia a les 12:00 del migdia.
+// Es calcula al build i es revalida al navegador per si el build ha quedat desfasat.
+const llindarCursa = edicio?.data ? new Date(`${edicio.data}T12:00:00`) : null;
+const cursaPassadaBuild = llindarCursa ? Date.now() >= llindarCursa.getTime() : false;
 ---
 <Layout>
   <Header />
@@ -103,14 +108,33 @@ const heroFons = edicio?.heroFonsUrl ?? recorreguts.find((r) => r.imatgeUrl)?.im
           Tres recorreguts pels corriols del Fau, la carena i les riberes de Maçanet de Cabrenys.
           Tria el teu repte.
         </p>
-        <div class="mt-8 flex flex-wrap justify-center gap-3">
-          <a href="/pagina/inscripcions" class="rounded-full bg-fau-500 px-8 py-3 font-display text-lg font-semibold uppercase tracking-wide text-night-950 transition hover:bg-fau-400">
-            Inscripcions
-          </a>
-          <a href="/resultats" class="rounded-full border border-white/30 px-8 py-3 font-display text-lg font-semibold uppercase tracking-wide text-white transition hover:border-fau-400 hover:text-fau-400">
-            Resultats
-          </a>
+        <div class="mt-8 flex flex-wrap justify-center gap-3" data-cta data-llindar={llindarCursa?.toISOString() ?? ''}>
+          <div data-cta-pre class={`flex flex-wrap justify-center gap-3 ${cursaPassadaBuild ? 'hidden' : ''}`}>
+            <a href="/pagina/inscripcions" class="rounded-full bg-fau-500 px-8 py-3 font-display text-lg font-semibold uppercase tracking-wide text-night-950 transition hover:bg-fau-400">
+              Inscripcions
+            </a>
+            <a href="#curses" class="rounded-full border border-white/30 px-8 py-3 font-display text-lg font-semibold uppercase tracking-wide text-white transition hover:border-fau-400 hover:text-fau-400">
+              Recorreguts
+            </a>
+          </div>
+          <div data-cta-post class={`flex flex-wrap justify-center gap-3 ${cursaPassadaBuild ? '' : 'hidden'}`}>
+            <a href="/resultats" class="rounded-full bg-fau-500 px-8 py-3 font-display text-lg font-semibold uppercase tracking-wide text-night-950 transition hover:bg-fau-400">
+              Resultats
+            </a>
+            <a href="/imatges" class="rounded-full border border-white/30 px-8 py-3 font-display text-lg font-semibold uppercase tracking-wide text-white transition hover:border-fau-400 hover:text-fau-400">
+              Imatges
+            </a>
+          </div>
         </div>
+        <script>
+          const wrap = document.querySelector('[data-cta]');
+          const llindar = wrap?.getAttribute('data-llindar');
+          if (wrap && llindar) {
+            const passat = Date.now() >= Date.parse(llindar);
+            wrap.querySelector('[data-cta-pre]')?.classList.toggle('hidden', passat);
+            wrap.querySelector('[data-cta-post]')?.classList.toggle('hidden', !passat);
+          }
+        </script>
         <div class="mx-auto mt-12 grid max-w-3xl grid-cols-3 gap-3">
           {recorreguts.map((r) => (
             r.slug ? (
