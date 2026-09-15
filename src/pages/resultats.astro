@@ -7,11 +7,18 @@ import { sanity, queries } from '../lib/sanity';
 type Edicio = {
   any: number;
   estat?: string;
+  data?: string;
   resultatsEmbed?: string;
   resultatsLinks?: { titol?: string; url?: string }[];
 };
 
 const edicions = await sanity.fetch<Edicio[]>(queries.edicionsResultats);
+// Mateix criteri que la home: una edició compta com a passada el dia de la cursa a les 12:00.
+// Les futures no es mostren fins que arribi el moment.
+const passades = edicions.filter((e) => {
+  if (!e.data) return true;
+  return Date.now() >= new Date(`${e.data}T12:00:00`).getTime();
+});
 const teDades = (e: Edicio) => !!e.resultatsEmbed || (e.resultatsLinks?.length ?? 0) > 0;
 ---
 <Layout title="Resultats — Cursa del Fau">
@@ -25,7 +32,7 @@ const teDades = (e: Edicio) => !!e.resultatsEmbed || (e.resultatsLinks?.length ?
     </p>
 
     <div class="mt-8 space-y-6">
-      {edicions.map((e) => (
+      {passades.map((e) => (
         <section class={`rounded-lg border p-6 md:p-8 ${e.estat === 'actual' ? 'border-fau-500 bg-orange-50' : 'border-stone-200 bg-white'}`}>
           <div class="flex flex-wrap items-center gap-3">
             <h2 class="font-display text-2xl font-bold">Edició {e.any}</h2>
