@@ -27,7 +27,7 @@ export const queries = {
     nom, distanciaKm, desnivell, preu, puntSortida, descripcio,
     perA, horaSortida, tempsMaxim, alcadaMin, alcadaMax,
     avituallaments[]{punt, km}, talls[]{punt, horaLimit},
-    mapaEmbedUrl, "imatgeUrl": imatge.asset->url, "perfilUrl": perfil.asset->url
+    mapaEmbedUrl, "perfilUrl": perfil.asset->url
   }`,
   sponsors: `*[_type == "sponsor"] | order(ordre asc){nom, url, categoria, "logoUrl": logo.asset->url}`,
   edicionsResultats: `*[_type == "edicio"] | order(any desc){any, estat, resultatsEmbed, resultatsLinks[]{titol, url}}`,

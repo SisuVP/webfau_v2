@@ -26,7 +26,6 @@ const r = await sanity.fetch<{
   preu?: number;
   puntSortida?: string;
   descripcio?: any[];
-  imatgeUrl?: string;
   perA?: string;
   horaSortida?: string;
   tempsMaxim?: string;
@@ -59,14 +58,6 @@ const fitxa: [string, string][] = [
     <h1 class="font-display mt-2 text-4xl font-bold md:text-5xl">{r.nom}</h1>
     {r.perA && (
       <p class="mt-2 text-sm font-semibold uppercase tracking-widest text-stone-500">{r.perA}</p>
-    )}
-    {r.imatgeUrl && (
-      <img
-        src={`${r.imatgeUrl}?w=1200&auto=format`}
-        alt={r.nom}
-        loading="eager"
-        class="mt-6 w-full rounded-2xl object-cover shadow"
-      />
     )}
 
     <section class="mt-6 rounded-2xl bg-night-900 p-6 text-white md:p-8">
