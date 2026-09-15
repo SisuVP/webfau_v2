@@ -24,6 +24,29 @@ const pagina = await sanity.fetch<{ titol: string; cos?: any[]; embedUrl?: strin
 if (!pagina) {
   return Astro.redirect('/');
 }
+
+const esContacte = slug === 'contacte';
+
+const canals = [
+  {
+    nom: 'Correu electrònic',
+    valor: 'info.cursadelfau@gmail.com',
+    href: 'mailto:info.cursadelfau@gmail.com',
+    icona: '<path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/><path d="m22 7-10 6L2 7"/>',
+  },
+  {
+    nom: 'Facebook',
+    valor: 'CursaDelFau',
+    href: 'https://www.facebook.com/CursaDelFau',
+    icona: '<path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3Z"/>',
+  },
+  {
+    nom: 'Instagram',
+    valor: '@cursadelfau_org',
+    href: 'https://www.instagram.com/cursadelfau_org/',
+    icona: '<rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>',
+  },
+];
 ---
 <Layout title={`${pagina.titol} — Cursa del Fau`}>
   <Header />
@@ -31,6 +54,20 @@ if (!pagina) {
   <main class="mx-auto max-w-3xl px-4 py-10">
     <p><a href="/" class="text-sm font-semibold text-fau-600 underline">← Inici</a></p>
     <h1 class="font-display mt-2 text-4xl font-bold md:text-5xl">{pagina.titol}</h1>
+    {esContacte && (
+      <ul class="mt-6 grid gap-4 md:grid-cols-3">
+        {canals.map((c) => (
+          <li>
+            <a href={c.href} target={c.href.startsWith('mailto:') ? undefined : '_blank'} rel="noopener"
+              class="flex h-full flex-col items-center gap-2 rounded-2xl bg-night-900 p-6 text-center text-white transition hover:-translate-y-0.5 hover:shadow-xl">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#dd9933" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={c.icona} />
+              <span class="font-display text-sm font-semibold uppercase tracking-widest">{c.nom}</span>
+              <span class="text-sm text-stone-300">{c.valor}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    )}
     <div class="mt-6 rounded-2xl border border-stone-200 bg-white p-8">
       <PortableText value={pagina.cos ?? []} />
     </div>
