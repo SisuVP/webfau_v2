@@ -105,7 +105,28 @@ const jsonLd = {
     .map((r) => ({
       '@type': 'SportsEvent',
       name: r.nom,
+      description: `${r.nom}: ${r.distanciaKm} km i ${r.desnivell ?? ''} m positius a Maçanet de Cabrenys.`,
       url: `${SITE}/recorregut/${r.slug}`,
+      ...(edicio?.data
+        ? {
+            startDate: `${edicio.data}T07:30:00`,
+            endDate: `${edicio.data}T13:00:00`,
+            eventStatus: cursaPassadaBuild
+              ? 'https://schema.org/EventCompleted'
+              : 'https://schema.org/EventScheduled',
+          }
+        : {}),
+      location: {
+        '@type': 'Place',
+        name: 'Camp de Futbol de Maçanet de Cabrenys',
+        address: {
+          '@type': 'PostalAddress',
+          addressLocality: 'Maçanet de Cabrenys',
+          addressRegion: 'Catalunya',
+          addressCountry: 'ES',
+        },
+      },
+      organizer: { '@type': 'SportsOrganization', name: 'Club Excursionista Maçanetenc', url: SITE },
       ...(r.preu != null
         ? {
             offers: {
