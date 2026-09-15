@@ -14,6 +14,7 @@ logo-fix/
 # fitxers temporals de scraping
 tmp-*.html
 check-*.mjs
+seed-*.mjs
 
 # dependencies
 node_modules/
