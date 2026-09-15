@@ -52,19 +52,61 @@ const fitxa: [string, string][] = [
 ];
 
 const SITE = import.meta.env.SITE_URL ?? 'https://cursadelfau.org';
+
+// Data de l'edició per al startDate (obligatori a Rich Results)
+const ed = await sanity.fetch<{ data?: string; any?: number }>(`{
+  "data": *[_type == "edicio" && estat == "actual"][0].data,
+  "any": *[_type == "edicio" && estat == "actual"][0].any
+}`);
+const horaMatch = r.horaSortida?.match(/(\d{1,2})[:.](\d{2})/);
+const horaISO = horaMatch ? `${horaMatch[1].padStart(2, '0')}:${horaMatch[2]}:00` : '07:30:00';
+const iniciISO = ed?.data ? `${ed.data}T${horaISO}` : undefined;
+const passat = iniciISO ? Date.now() >= new Date(iniciISO).getTime() : false;
+const descripcioRec = `${r.nom}: ${r.distanciaKm ?? ''} km i ${r.desnivell ?? ''} m positius a Maçanet de Cabrenys.`;
+
 const jsonLdRec = {
   '@context': 'https://schema.org',
   '@type': 'SportsEvent',
-  name: `${r.nom} — Cursa del Fau`,
+  name: `${r.nom} — Cursa del Fau${ed?.any ? ` ${ed.any}` : ''}`,
+  description: descripcioRec,
   sport: 'Trail running',
+  ...(iniciISO
+    ? {
+        startDate: iniciISO,
+        endDate: ed?.data ? `${ed.data}T13:00:00` : undefined,
+        eventStatus: passat
+          ? 'https://schema.org/EventCompleted'
+          : 'https://schema.org/EventScheduled',
+      }
+    : {}),
   location: {
     '@type': 'Place',
-    name: 'Maçanet de Cabrenys',
-    address: { '@type': 'PostalAddress', addressLocality: 'Maçanet de Cabrenys', addressRegion: 'Catalunya', addressCountry: 'ES' },
+    name: 'Camp de Futbol de Maçanet de Cabrenys',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: 'Camp de Futbol, Urbanització Font d’en Coll',
+      addressLocality: 'Maçanet de Cabrenys',
+      addressRegion: 'Catalunya',
+      postalCode: '17720',
+      addressCountry: 'ES',
+    },
   },
+  organizer: { '@type': 'SportsOrganization', name: 'Club Excursionista Maçanetenc', url: SITE },
   url: `${SITE}/recorregut/${slug}`,
-  ...(r.imatgeUrl ? { image: `${r.imatgeUrl}?w=1200&auto=format` } : {}),
-  ...(r.preu != null ? { offers: { '@type': 'Offer', price: r.preu, priceCurrency: 'EUR' } } : {}),
+  ...(r.imatgeUrl ? { image: [`${r.imatgeUrl}?w=1200&auto=format`] } : {}),
+  ...(r.preu != null
+    ? {
+        offers: {
+          '@type': 'Offer',
+          price: r.preu,
+          priceCurrency: 'EUR',
+          url: `${SITE}/pagina/inscripcions`,
+          availability: passat
+            ? 'https://schema.org/SoldOut'
+            : 'https://schema.org/InStock',
+        },
+      }
+    : {}),
 };
 ---
 <Layout
