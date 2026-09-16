@@ -15,6 +15,9 @@ logo-fix/
 tmp-*.html
 check-*.mjs
 seed-*.mjs
+# artefactes de test
+test-results/
+playwright-report/
 
 # dependencies
 node_modules/
