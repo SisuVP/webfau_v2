@@ -3,7 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import PortableText from '../../components/PortableText.astro';
-import { sanity, queries } from '../../lib/sanity';
+import { sanity, queries, type Blocs } from '../../lib/sanity';
 
 export async function getStaticPaths() {
   try {
@@ -16,7 +16,7 @@ export async function getStaticPaths() {
 
 const { slug } = Astro.params;
 
-const pagina = await sanity.fetch<{ titol: string; cos?: any[]; embedUrl?: string }>(
+const pagina = await sanity.fetch<{ titol: string; cos?: Blocs; embedUrl?: string }>(
   queries.paginaBySlug,
   { slug },
 );

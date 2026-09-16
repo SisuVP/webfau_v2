@@ -1,5 +1,8 @@
 import { createClient } from '@sanity/client';
 import { createImageUrlBuilder } from '@sanity/image-url';
+import type { PortableTextBlock } from '@portabletext/types';
+
+export type Blocs = PortableTextBlock[];
 
 export const sanity = createClient({
   projectId: import.meta.env.PUBLIC_SANITY_PROJECT_ID ?? 'e497m7tn',

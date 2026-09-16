@@ -3,7 +3,8 @@ import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import PortableText from '../../components/PortableText.astro';
-import { sanity, queries } from '../../lib/sanity';
+import Icona from '../../components/Icona.astro';
+import { sanity, queries, type Blocs } from '../../lib/sanity';
 
 export async function getStaticPaths() {
   try {
@@ -25,7 +26,7 @@ const r = await sanity.fetch<{
   desnivell?: number;
   preu?: number;
   puntSortida?: string;
-  descripcio?: any[];
+  descripcio?: Blocs;
   perA?: string;
   horaSortida?: string;
   tempsMaxim?: string;
@@ -135,7 +136,7 @@ const jsonLdRec = {
         ))}
       </dl>
       {r.puntSortida && (
-        <p class="mt-4 text-sm text-stone-300">📍 Sortida / arribada: {r.puntSortida}</p>
+        <p class="mt-4 flex items-center gap-2 text-sm text-stone-300"><Icona nom="pin" class="h-4 w-4 text-fau-400" /> Sortida / arribada: {r.puntSortida}</p>
       )}
     </section>
 
@@ -164,7 +165,7 @@ const jsonLdRec = {
         <h2 class="font-display text-xl font-bold uppercase tracking-wide">Temps de tall</h2>
         <ul class="mt-4 space-y-2 text-sm">
           {(r.talls ?? []).map((t) => (
-            <li>⏱️ <strong>{t.punt}</strong>{t.horaLimit ? ` — límit ${t.horaLimit}` : ''}</li>
+            <li class="flex items-center gap-2"><Icona nom="crono" class="h-4 w-4 shrink-0" /> <span><strong>{t.punt}</strong>{t.horaLimit ? ` — límit ${t.horaLimit}` : ''}</span></li>
           ))}
         </ul>
       </section>

@@ -4,7 +4,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import PortableText from '../components/PortableText.astro';
 import SponsorLogo from '../components/SponsorLogo.astro';
-import { sanity, queries } from '../lib/sanity';
+import { sanity, queries, type Blocs } from '../lib/sanity';
 
 type Recorregut = {
   nom: string;
@@ -32,7 +32,7 @@ const mocks: Recorregut[] = [
   { nom: 'Entre Aigües 9 km', distanciaKm: 9, desnivell: 400, preu: 19 },
 ];
 
-let edicio: { any?: number; data?: string; programa?: any[]; reglament?: any[]; cartellUrl?: string; heroFonsUrl?: string } | null = null;
+let edicio: { any?: number; data?: string; programa?: Blocs; reglament?: Blocs; cartellUrl?: string; heroFonsUrl?: string } | null = null;
 let recorreguts: Recorregut[] = mocks;
 let sponsors: Sponsor[] = [];
 let fromSanity = false;
@@ -53,12 +53,12 @@ try {
   // Sense connexió: mostrem mocks
 }
 
-function teaser(blocks: any[] = [], maxChars = 300) {
-  const out: any[] = [];
+function teaser(blocks: Blocs = [], maxChars = 300) {
+  const out: Blocs = [];
   let n = 0;
   for (const b of blocks) {
-    if (b?._type !== 'block' || !Array.isArray(b.children)) continue;
-    const t = b.children.map((c: any) => c.text ?? '').join('');
+    if (b?._type !== 'block' || !('children' in b) || !Array.isArray(b.children)) continue;
+    const t = b.children.map((c) => ('text' in c && typeof c.text === 'string' ? c.text : '')).join('');
     if (!t.trim()) continue;
     out.push(b);
     n += t.length;

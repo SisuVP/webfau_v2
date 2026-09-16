@@ -3,9 +3,9 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import PortableText from '../components/PortableText.astro';
-import { sanity, queries } from '../lib/sanity';
+import { sanity, queries, type Blocs } from '../lib/sanity';
 
-const edicio = await sanity.fetch<{ any?: number; programa?: any[] }>(queries.edicioActual);
+const edicio = await sanity.fetch<{ any?: number; programa?: Blocs }>(queries.edicioActual);
 ---
 <Layout title={`Programa ${edicio?.any ?? ''} — Cursa del Fau`}>
   <Header />

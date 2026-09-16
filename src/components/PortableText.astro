@@ -1,17 +1,22 @@
 ---
 import { toHTML } from '@portabletext/to-html';
-import { urlFor } from '../lib/sanity';
+import { urlFor, type Blocs } from '../lib/sanity';
 
 interface Props {
-  value?: any[];
+  value?: Blocs;
+}
+
+interface ImatgeBlok {
+  asset?: { _ref?: string; _type?: string };
+  alt?: string;
 }
 
 const { value = [] } = Astro.props;
 
-const html = toHTML(value ?? [], {
+const html = toHTML(value, {
   components: {
     types: {
-      image: ({ value }: any) => {
+      image: ({ value }: { value?: ImatgeBlok }) => {
         if (!value?.asset) return '';
         const url = urlFor(value).width(1200).auto('format').url();
         const alt = value.alt ?? '';
