@@ -5,20 +5,24 @@ import Footer from '../components/Footer.astro';
 ---
 <Layout title="Pàgina no trobada (404) — Cursa del Fau" description="Aquest corriol no porta enlloc. Torna a l'inici de la Cursa del Fau.">
   <Header />
-  <main class="hero-gradient mx-auto max-w-3xl px-4 py-32 text-center md:py-40">
-    <p class="font-display text-8xl font-bold text-fau-500 md:text-9xl">404</p>
-    <h1 class="font-display mt-4 text-3xl font-bold text-white md:text-4xl">Has sortit del recorregut</h1>
-    <p class="mx-auto mt-4 max-w-md text-stone-300">
-      Aquest corriol no porta enlloc. Torna al camí marcat:
-    </p>
-    <div class="mt-8 flex flex-wrap justify-center gap-3">
-      <a href="/" class="rounded-full bg-fau-500 px-8 py-3 font-display text-lg font-semibold uppercase tracking-wide text-night-950 transition hover:bg-fau-400">
-        Inici
-      </a>
-      <a href="/#curses" class="rounded-full border border-white/30 px-8 py-3 font-display text-lg font-semibold uppercase tracking-wide text-white transition hover:border-fau-400 hover:text-fau-400">
-        Recorreguts
-      </a>
-    </div>
+  <main>
+    <section class="hero-gradient">
+      <div class="mx-auto max-w-3xl px-4 py-32 text-center md:py-40">
+        <p class="font-display text-8xl font-bold text-fau-500 md:text-9xl">404</p>
+        <h1 class="font-display mt-4 text-3xl font-bold text-white md:text-4xl">Has sortit del recorregut</h1>
+        <p class="mx-auto mt-4 max-w-md text-stone-300">
+          Aquest corriol no porta enlloc. Torna al camí marcat:
+        </p>
+        <div class="mt-8 flex flex-wrap justify-center gap-3">
+          <a href="/" class="rounded-full bg-fau-500 px-8 py-3 font-display text-lg font-semibold uppercase tracking-wide text-night-950 transition hover:bg-fau-400">
+            Inici
+          </a>
+          <a href="/#curses" class="rounded-full border border-white/30 px-8 py-3 font-display text-lg font-semibold uppercase tracking-wide text-white transition hover:border-fau-400 hover:text-fau-400">
+            Recorreguts
+          </a>
+        </div>
+      </div>
+    </section>
   </main>
   <Footer />
 </Layout>
