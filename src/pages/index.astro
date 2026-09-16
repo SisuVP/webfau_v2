@@ -4,6 +4,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import PortableText from '../components/PortableText.astro';
 import SponsorLogo from '../components/SponsorLogo.astro';
+import Imatge from '../components/Imatge.astro';
 import { sanity, queries, type Blocs } from '../lib/sanity';
 
 type Recorregut = {
@@ -146,10 +147,11 @@ const jsonLd = {
   <main>
     <section class="hero-gradient relative overflow-hidden">
       {heroFons && (
-        <img
-          src={`${heroFons}?w=2000&auto=format`}
+        <Imatge
+          src={heroFons}
           alt=""
-          aria-hidden="true"
+          widths={[1200, 2000]}
+          sizes="100vw"
           loading="eager"
           class="absolute inset-0 h-full w-full object-cover opacity-40"
         />
@@ -225,7 +227,7 @@ const jsonLd = {
           <article class="group overflow-hidden rounded-lg bg-night-900 text-white shadow-lg transition duration-300 hover:-translate-y-1 hover:shadow-2xl">
             <div class="relative">
               {r.imatgeUrl ? (
-                <img src={`${r.imatgeUrl}?w=800&auto=format`} alt={r.nom} loading="lazy" class="h-52 w-full object-cover transition duration-500 group-hover:scale-105" />
+                <Imatge src={r.imatgeUrl} alt={r.nom} widths={[400, 800]} sizes="(max-width: 768px) 100vw, 400px" class="h-52 w-full object-cover transition duration-500 group-hover:scale-105" />
               ) : (
                 <div class="hero-gradient h-52 w-full"></div>
               )}

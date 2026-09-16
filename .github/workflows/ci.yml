@@ -21,3 +21,8 @@ jobs:
       - run: npm ci
       - run: npm run check
       - run: npm run build
+      - run: npx playwright install chromium --only-shell
+      - run: npm run preview -- --port 4321 &
+      - run: npx wait-on http://localhost:4321 && npm run test:e2e
+        env:
+          PLAYWRIGHT_BASE_URL: http://localhost:4321

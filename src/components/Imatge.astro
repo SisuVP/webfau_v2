@@ -1,0 +1,26 @@
+---
+import { Image } from 'astro:assets';
+
+interface Props {
+  src: string;
+  alt: string;
+  widths?: number[];
+  sizes?: string;
+  class?: string;
+  loading?: 'lazy' | 'eager';
+}
+
+// Les URL de Sanity arriben amb paràmetres (?w=...): Image ja genera les
+// mides i formats, així que passem la URL neta.
+const { src, alt, widths = [400, 800, 1200], sizes, class: cls, loading = 'lazy' } = Astro.props;
+const neta = src.split('?')[0];
+---
+<Image
+  src={neta}
+  alt={alt}
+  widths={widths}
+  sizes={sizes ?? `(max-width: 800px) 100vw, ${Math.max(...widths)}px`}
+  class={cls}
+  loading={loading}
+  inferSize
+/>

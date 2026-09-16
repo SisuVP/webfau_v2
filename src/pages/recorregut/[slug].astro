@@ -4,6 +4,7 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import PortableText from '../../components/PortableText.astro';
 import Icona from '../../components/Icona.astro';
+import Imatge from '../../components/Imatge.astro';
 import { sanity, queries, type Blocs } from '../../lib/sanity';
 
 export async function getStaticPaths() {
@@ -184,10 +185,11 @@ const jsonLdRec = {
     {r.perfilUrl && (
       <section class="mt-6">
         <h2 class="font-display text-xl font-bold uppercase tracking-wide">Perfil</h2>
-        <img
-          src={`${r.perfilUrl}?w=1400&auto=format`}
+        <Imatge
+          src={r.perfilUrl}
           alt={`Perfil ${r.nom}`}
-          loading="lazy"
+          widths={[800, 1400]}
+          sizes="(max-width: 768px) 100vw, 768px"
           class="mt-4 w-full rounded-lg border border-stone-200 bg-white shadow"
         />
       </section>

@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import Imatge from '../components/Imatge.astro';
 import { sanity, queries } from '../lib/sanity';
 
 type Galeria = { titol?: string; url?: string; portadaUrl?: string };
@@ -27,7 +28,7 @@ const ambGaleries = edicions.filter((e) => e.galeries?.length);
             <li class="overflow-hidden rounded-lg border border-stone-200 bg-white shadow-sm">
               <a href={g.url} target="_blank" rel="noopener" title={g.titol}>
                 {g.portadaUrl && (
-                  <img src={`${g.portadaUrl}?w=800&auto=format`} alt={g.titol ?? ''} loading="lazy" class="h-48 w-full object-cover" />
+                  <Imatge src={g.portadaUrl} alt={g.titol ?? ''} widths={[400, 800]} sizes="(max-width: 640px) 100vw, 400px" class="h-48 w-full object-cover" />
                 )}
                 <p class="p-4 text-center text-sm font-semibold">{g.titol}</p>
               </a>

@@ -8,6 +8,9 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://cursadelfau.org',
   output: 'static',
+  image: {
+    domains: ['cdn.sanity.io'],
+  },
   vite: {
     plugins: [tailwindcss()]
   },
