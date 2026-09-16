@@ -53,8 +53,8 @@ const {
     {import.meta.env.PUBLIC_CF_BEACON_TOKEN && (
       <script
         is:inline
-        defer
-        src="https://static.cloudflare.com/beacon.min.js"
+        type="module"
+        src="https://static.cloudflareinsights.com/beacon.min.js"
         data-cf-beacon={`{"token": "${import.meta.env.PUBLIC_CF_BEACON_TOKEN}"}`}
       />
     )}
