@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /eines/
 
 Sitemap: https://cursadelfau.org/sitemap-index.xml

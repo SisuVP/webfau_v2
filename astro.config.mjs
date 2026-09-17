@@ -15,5 +15,5 @@ export default defineConfig({
     plugins: [tailwindcss()]
   },
 
-  integrations: [sitemap({ filter: (page) => !page.includes('/eines/') })]
+  integrations: [sitemap()]
 });
