@@ -92,11 +92,10 @@ const CATEGORIES = [
                           <button
                             type="button"
                             data-tria={t.eventId}
-                            class="rounded-lg border border-stone-200 bg-white px-6 py-5 text-left shadow-sm transition hover:border-fau-500 hover:shadow"
+                            class="rounded-lg border border-stone-200 bg-stone-50 px-5 py-4 text-left shadow-sm transition hover:border-fau-500 hover:shadow"
                           >
-                            <span class="font-display block text-xl font-bold">{t.nom}</span>
-                            <span class="mt-1 block text-sm text-stone-500">{t.cls.total} arribats</span>
-                            <span class="mt-2 block text-sm font-semibold text-fau-600">Veure classificació →</span>
+                            <span class="font-display block text-lg font-bold">{t.nom}</span>
+                            <span class="mt-0.5 block text-sm text-stone-600">{t.cls.total} finishers</span>
                           </button>
                         ))}
                       </div>
@@ -211,11 +210,14 @@ const CATEGORIES = [
                 );
               })()}
               {(e.resultatsLinks?.length ?? 0) > 0 && (
-                <ul class="mt-4 flex flex-wrap gap-3">
+                <ul class="mt-6 grid gap-3 sm:grid-cols-3">
                   {(e.resultatsLinks ?? []).map((l) => (
                     <li>
-                      <a href={l.url} target="_blank" rel="noopener" class="inline-flex items-center gap-2 rounded-full bg-stone-900 px-5 py-2 text-sm font-semibold text-white hover:bg-stone-700">
-                        {l.titol} <Icona nom="descarrega" class="h-4 w-4" />
+                      <a href={l.url} target="_blank" rel="noopener" class="block rounded-lg border border-stone-200 bg-stone-50 px-5 py-4 shadow-sm transition hover:border-fau-500 hover:shadow">
+                        <span class="font-display block text-lg font-bold">{l.titol}</span>
+                        <span class="mt-0.5 flex items-center gap-1.5 text-sm font-semibold text-fau-600">
+                          <Icona nom="descarrega" class="h-4 w-4" /> Descarrega el PDF
+                        </span>
                       </a>
                     </li>
                   ))}
@@ -225,11 +227,14 @@ const CATEGORIES = [
           ) : teDades(e) ? (
             <>
               {(e.resultatsLinks?.length ?? 0) > 0 && (
-                <ul class="mt-4 flex flex-wrap gap-3">
+                <ul class="mt-6 grid gap-3 sm:grid-cols-3">
                   {(e.resultatsLinks ?? []).map((l) => (
                     <li>
-                      <a href={l.url} target="_blank" rel="noopener" class="inline-flex items-center gap-2 rounded-full bg-stone-900 px-5 py-2 text-sm font-semibold text-white hover:bg-stone-700">
-                        {l.titol} <Icona nom="descarrega" class="h-4 w-4" />
+                      <a href={l.url} target="_blank" rel="noopener" class="block rounded-lg border border-stone-200 bg-stone-50 px-5 py-4 shadow-sm transition hover:border-fau-500 hover:shadow">
+                        <span class="font-display block text-lg font-bold">{l.titol}</span>
+                        <span class="mt-0.5 flex items-center gap-1.5 text-sm font-semibold text-fau-600">
+                          <Icona nom="descarrega" class="h-4 w-4" /> Descarrega el PDF
+                        </span>
                       </a>
                     </li>
                   ))}
