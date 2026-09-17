@@ -65,9 +65,9 @@ const usaApi = (e: Edicio) => taules.has(e.any);
 const dataSnapshot = new Date().toLocaleDateString('ca-ES', { day: 'numeric', month: 'numeric', year: 'numeric' });
 
 const CATEGORIES = [
-  { id: 'general', etiqueta: 'General', completa: 'general' },
-  { id: 'masculina', etiqueta: 'Masc.', completa: 'masculina' },
-  { id: 'femenina', etiqueta: 'Fem.', completa: 'femenina' },
+  { id: 'general', etiqueta: 'General', sencer: 'General', completa: 'general' },
+  { id: 'masculina', etiqueta: 'Masc.', sencer: 'Masculina', completa: 'masculina' },
+  { id: 'femenina', etiqueta: 'Fem.', sencer: 'Femenina', completa: 'femenina' },
 ] as const;
 ---
 <Layout title="Resultats — Cursa del Fau">
@@ -141,7 +141,7 @@ const CATEGORIES = [
                                     title={`Classificació ${c.completa}`}
                                     class="rounded-full border border-stone-300 px-3 py-1.5 text-[13px] font-semibold text-stone-600 sm:px-4 sm:text-sm aria-selected:border-night-950 aria-selected:bg-night-950 aria-selected:text-white"
                                   >
-                                    {c.etiqueta}
+                                    <span class="hidden sm:inline">{c.sencer}</span><span class="sm:hidden">{c.etiqueta}</span>
                                   </button>
                                 )
                             )}
