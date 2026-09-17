@@ -81,82 +81,135 @@ const CATEGORIES = [
 
           {usaApi(e) ? (
             <>
-              {(taules.get(e.any) ?? []).map((t) => (
-                <div class="mt-6 overflow-hidden rounded-lg border border-stone-200 bg-white" data-classificacio>
-                  <div class="flex flex-wrap items-center justify-between gap-3 border-b border-stone-200 bg-stone-50 px-4 py-3">
-                    <h3 class="font-display text-lg font-bold">{t.nom}</h3>
-                    <div class="flex gap-2" role="tablist" aria-label={`Classificació ${t.nom}`}>
-                      {CATEGORIES.map(
-                        (c) =>
-                          t.cls[c.id].length > 0 && (
-                            <button
-                              type="button"
-                              role="tab"
-                              data-tab={c.id}
-                              aria-selected={c.id === 'general' ? 'true' : 'false'}
-                              class="rounded-full border border-stone-300 px-4 py-1.5 text-sm font-semibold text-stone-600 aria-selected:border-night-950 aria-selected:bg-night-950 aria-selected:text-white"
-                            >
-                              {c.etiqueta}
-                            </button>
-                          )
-                      )}
-                    </div>
-                  </div>
-                  <div class="px-4 pt-3">
-                    <input
-                      type="search"
-                      data-cerca
-                      placeholder="Cerca per nom o dorsal…"
-                      aria-label={`Cerca a la classificació ${t.nom}`}
-                      class="w-full rounded-full border border-stone-300 px-4 py-2 text-sm focus:border-fau-500 focus:outline-none"
-                    />
-                  </div>
-                  {CATEGORIES.map(
-                    (c) =>
-                      t.cls[c.id].length > 0 && (
-                        <div data-panel={c.id} hidden={c.id !== 'general'} role="tabpanel">
-                          <table class="mt-2 w-full text-sm">
-                            <thead>
-                              <tr class="border-b border-stone-200 text-left text-xs uppercase tracking-wider text-stone-500">
-                                <th scope="col" class="px-4 py-2 font-semibold">Pos</th>
-                                <th scope="col" class="hidden px-2 py-2 font-semibold sm:table-cell">Dorsal</th>
-                                <th scope="col" class="px-2 py-2 font-semibold">Nom</th>
-                                <th scope="col" class="hidden px-2 py-2 font-semibold md:table-cell">Club</th>
-                                <th scope="col" class="px-4 py-2 text-right font-semibold">Temps</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {t.cls[c.id].map((f) => (
-                                <tr data-nom={f.nom} data-dorsal={f.dorsal} class={`border-b border-stone-100 ${f.pos <= 3 ? 'bg-orange-50' : ''}`}>
-                                  <td class="px-4 py-2">
-                                    <span
-                                      class={`inline-flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${f.pos <= 3 ? 'bg-fau-500 text-night-950' : 'bg-stone-100 text-stone-700'}`}
-                                    >
-                                      {f.pos}
-                                    </span>
-                                  </td>
-                                  <td class="hidden px-2 py-2 tabular-nums text-stone-500 sm:table-cell">{f.dorsal}</td>
-                                  <td class="px-2 py-2 font-semibold">{f.nom}</td>
-                                  <td class="hidden px-2 py-2 text-stone-600 md:table-cell">{f.club || '—'}</td>
-                                  <td class="px-4 py-2 text-right tabular-nums font-semibold">{f.temps}</td>
-                                </tr>
-                              ))}
-                              <tr data-buida hidden>
-                                <td colspan={5} class="px-4 py-6 text-center text-stone-500">Cap corredor coincideix amb la cerca.</td>
-                              </tr>
-                            </tbody>
-                          </table>
+              {(() => {
+                const llista = taules.get(e.any) ?? [];
+                const multi = llista.length > 1;
+                return (
+                  <div data-edicio={e.any}>
+                    {multi && (
+                      <div data-menu class="mt-6 grid gap-3 sm:grid-cols-3">
+                        {llista.map((t) => (
+                          <button
+                            type="button"
+                            data-tria={t.eventId}
+                            class="rounded-lg border border-stone-200 bg-white px-6 py-5 text-left shadow-sm transition hover:border-fau-500 hover:shadow"
+                          >
+                            <span class="font-display block text-xl font-bold">{t.nom}</span>
+                            <span class="mt-1 block text-sm text-stone-500">{t.cls.total} arribats</span>
+                            <span class="mt-2 block text-sm font-semibold text-fau-600">Veure classificació →</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                    {llista.map((t) => (
+                      <div data-event={t.eventId} hidden={multi} class="mt-6 overflow-hidden rounded-lg border border-stone-200 bg-white" data-classificacio>
+                        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-stone-200 bg-stone-50 px-4 py-3">
+                          <div class="flex items-center gap-3">
+                            {multi && (
+                              <button
+                                type="button"
+                                data-torna
+                                class="rounded-full border border-stone-300 px-3 py-1.5 text-sm font-semibold text-stone-600 hover:border-night-950"
+                              >
+                                ← Distàncies
+                              </button>
+                            )}
+                            <h3 class="font-display text-lg font-bold">{t.nom}</h3>
+                          </div>
+                          <div class="flex gap-2" role="tablist" aria-label={`Classificació ${t.nom}`}>
+                            {CATEGORIES.map(
+                              (c) =>
+                                t.cls[c.id].length > 0 && (
+                                  <button
+                                    type="button"
+                                    role="tab"
+                                    data-tab={c.id}
+                                    aria-selected={c.id === 'general' ? 'true' : 'false'}
+                                    class="rounded-full border border-stone-300 px-4 py-1.5 text-sm font-semibold text-stone-600 aria-selected:border-night-950 aria-selected:bg-night-950 aria-selected:text-white"
+                                  >
+                                    {c.etiqueta}
+                                  </button>
+                                )
+                            )}
+                          </div>
                         </div>
-                      )
-                  )}
-                  <p class="px-4 py-3 text-xs text-stone-500">
-                    Dades de Sportmaniacs · {dataSnapshot} ·{' '}
-                    <a href={t.enllac} target="_blank" rel="noopener" class="font-semibold text-fau-600 underline">
-                      Classificació completa amb filtres
-                    </a>
-                  </p>
-                </div>
-              ))}
+                        <div class="px-4 pt-3">
+                          <input
+                            type="search"
+                            data-cerca
+                            placeholder="Cerca per nom o dorsal…"
+                            aria-label={`Cerca a la classificació ${t.nom}`}
+                            class="w-full rounded-full border border-stone-300 px-4 py-2 text-sm focus:border-fau-500 focus:outline-none"
+                          />
+                        </div>
+                        {CATEGORIES.map(
+                          (c) =>
+                            t.cls[c.id].length > 0 && (
+                              <div data-panel={c.id} hidden={c.id !== 'general'} role="tabpanel">
+                                <table class="mt-2 w-full text-sm">
+                                  <thead>
+                                    <tr class="border-b border-stone-200 text-left text-xs uppercase tracking-wider text-stone-500">
+                                      <th scope="col" class="px-4 py-2 font-semibold">Pos</th>
+                                      <th scope="col" class="hidden px-2 py-2 font-semibold sm:table-cell">Dorsal</th>
+                                      <th scope="col" class="px-2 py-2 font-semibold">Nom</th>
+                                      <th scope="col" class="hidden px-2 py-2 font-semibold md:table-cell">Club</th>
+                                      <th scope="col" class="px-4 py-2 text-right font-semibold">Temps</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {t.cls[c.id].map((f) => (
+                                      <tr data-nom={f.nom} data-dorsal={f.dorsal} class={`border-b border-stone-100 ${f.pos <= 3 ? 'bg-orange-50' : ''}`}>
+                                        <td class="px-4 py-2">
+                                          <span
+                                            class={`inline-flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${f.pos <= 3 ? 'bg-fau-500 text-night-950' : 'bg-stone-100 text-stone-700'}`}
+                                          >
+                                            {f.pos}
+                                          </span>
+                                        </td>
+                                        <td class="hidden px-2 py-2 tabular-nums text-stone-500 sm:table-cell">{f.dorsal}</td>
+                                        <td class="px-2 py-2 font-semibold">{f.nom}</td>
+                                        <td class="hidden px-2 py-2 text-stone-600 md:table-cell">{f.club || '—'}</td>
+                                        <td class="px-4 py-2 text-right tabular-nums font-semibold">{f.temps}</td>
+                                      </tr>
+                                    ))}
+                                    <tr data-buida hidden>
+                                      <td colspan={5} class="px-4 py-6 text-center text-stone-500">Cap corredor coincideix amb la cerca.</td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                            )
+                        )}
+                        <div class="flex items-center justify-center gap-4 border-t border-stone-200 px-4 py-3" data-paginador>
+                          <button
+                            type="button"
+                            data-anterior
+                            class="rounded-full border border-stone-300 px-4 py-1.5 text-sm font-semibold text-stone-600 disabled:opacity-40"
+                          >
+                            ← Anterior
+                          </button>
+                          <p class="text-sm tabular-nums text-stone-600">
+                            Pàgina <span data-pag>1</span> de <span data-totalpags>1</span>
+                          </p>
+                          <button
+                            type="button"
+                            data-seguent
+                            class="rounded-full border border-stone-300 px-4 py-1.5 text-sm font-semibold text-stone-600 disabled:opacity-40"
+                          >
+                            Següent →
+                          </button>
+                        </div>
+                        <p class="px-4 pb-3 text-xs text-stone-500">
+                          Dades de Sportmaniacs · {dataSnapshot} ·{' '}
+                          <a href={t.enllac} target="_blank" rel="noopener" class="font-semibold text-fau-600 underline">
+                            Classificació completa amb filtres
+                          </a>
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })()}
               {(e.resultatsLinks?.length ?? 0) > 0 && (
                 <ul class="mt-4 flex flex-wrap gap-3">
                   {(e.resultatsLinks ?? []).map((l) => (
@@ -204,36 +257,95 @@ const CATEGORIES = [
   </div>
   <Footer />
   <script>
-    // Pestanyes General/Masculina/Femenina + cercador per nom o dorsal.
-    // Tot el filtratge és client sobre les taules generades en build.
+    // Menú de distàncies per edició: només botons a l'inici, la taula en triar.
+    document.querySelectorAll('[data-edicio]').forEach((ed) => {
+      const menu = ed.querySelector('[data-menu]') as HTMLElement | null;
+      const events = Array.from(ed.querySelectorAll('[data-event]')) as HTMLElement[];
+      if (!menu || events.length === 0) return;
+      ed.querySelectorAll('[data-tria]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          menu.hidden = true;
+          events.forEach((ev) => {
+            ev.hidden = ev.dataset.event !== (btn as HTMLElement).dataset.tria;
+          });
+        });
+      });
+      ed.querySelectorAll('[data-torna]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          events.forEach((ev) => {
+            ev.hidden = true;
+          });
+          menu.hidden = false;
+        });
+      });
+    });
+
+    // Per classificació: pestanyes + cercador + paginació (25 files/pàgina).
+    // Tot client sobre les taules generades en build.
+    const PER_PAGINA = 25;
     document.querySelectorAll('[data-classificacio]').forEach((bloc) => {
-      const tabs = Array.from(bloc.querySelectorAll('[data-tab]'));
-      const panels = Array.from(bloc.querySelectorAll('[data-panel]'));
+      const el = (s: string) => bloc.querySelector(s) as HTMLElement | null;
+      const tabs = Array.from(bloc.querySelectorAll('[data-tab]')) as HTMLElement[];
+      const panels = Array.from(bloc.querySelectorAll('[data-panel]')) as HTMLElement[];
+      const cerca = el('[data-cerca]') as HTMLInputElement | null;
+      const pag = el('[data-pag]');
+      const totalPags = el('[data-totalpags]');
+      const btnAnt = el('[data-anterior]') as HTMLButtonElement | null;
+      const btnSeg = el('[data-seguent]') as HTMLButtonElement | null;
+      let tab = 'general';
+      let q = '';
+      let pagina = 1;
+
+      function render() {
+        panels.forEach((p) => {
+          p.hidden = p.dataset.panel !== tab;
+        });
+        const actiu = panels.find((p) => p.dataset.panel === tab);
+        if (!actiu) return;
+        const files = Array.from(actiu.querySelectorAll('tbody tr[data-nom]')) as HTMLElement[];
+        const coincidents = files.filter((tr) => {
+          if (q === '') return true;
+          const txt = `${tr.dataset.nom ?? ''} ${tr.dataset.dorsal ?? ''}`.toLowerCase();
+          return txt.includes(q);
+        });
+        const total = Math.max(1, Math.ceil(coincidents.length / PER_PAGINA));
+        pagina = Math.min(Math.max(1, pagina), total);
+        files.forEach((tr) => {
+          tr.hidden = true;
+        });
+        coincidents.slice((pagina - 1) * PER_PAGINA, pagina * PER_PAGINA).forEach((tr) => {
+          tr.hidden = false;
+        });
+        const buida = actiu.querySelector('[data-buida]') as HTMLElement | null;
+        if (buida) buida.hidden = coincidents.length > 0;
+        if (pag) pag.textContent = String(pagina);
+        if (totalPags) totalPags.textContent = String(total);
+        if (btnAnt) btnAnt.disabled = pagina <= 1;
+        if (btnSeg) btnSeg.disabled = pagina >= total;
+      }
+
       tabs.forEach((btn) => {
         btn.addEventListener('click', () => {
+          tab = btn.dataset.tab ?? 'general';
+          pagina = 1;
           tabs.forEach((b) => b.setAttribute('aria-selected', b === btn ? 'true' : 'false'));
-          panels.forEach((p) => {
-            (p as HTMLElement).hidden = (p as HTMLElement).dataset.panel !== (btn as HTMLElement).dataset.tab;
-          });
-          // Reaplica la cerca en canviar de pestanya
-          bloc.querySelector('[data-cerca]')?.dispatchEvent(new Event('input'));
+          render();
         });
       });
-      const cerca = bloc.querySelector('[data-cerca]') as HTMLInputElement | null;
       cerca?.addEventListener('input', () => {
-        const q = cerca.value.trim().toLowerCase();
-        panels.forEach((p) => {
-          let visibles = 0;
-          p.querySelectorAll('tbody tr[data-nom]').forEach((tr) => {
-            const el = tr as HTMLElement;
-            const txt = `${el.dataset.nom ?? ''} ${el.dataset.dorsal ?? ''}`.toLowerCase();
-            el.hidden = q !== '' && !txt.includes(q);
-            if (!el.hidden) visibles++;
-          });
-          const buida = p.querySelector('[data-buida]') as HTMLElement | null;
-          if (buida) buida.hidden = visibles > 0;
-        });
+        q = cerca.value.trim().toLowerCase();
+        pagina = 1;
+        render();
       });
+      btnAnt?.addEventListener('click', () => {
+        pagina--;
+        render();
+      });
+      btnSeg?.addEventListener('click', () => {
+        pagina++;
+        render();
+      });
+      render();
     });
   </script>
 </Layout>
