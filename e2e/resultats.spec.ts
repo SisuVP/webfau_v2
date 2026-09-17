@@ -10,7 +10,7 @@ test('resultats amb menú de distàncies i paginació', async ({ page }) => {
   await expect(edicio).toBeVisible();
 
   // Menú visible, taules amagades
-  const boto24 = edicio.getByRole('button', { name: /24 km.*finishers/i });
+  const boto24 = edicio.getByRole('button', { name: /24 km.*arribats a meta/i });
   await expect(boto24).toBeVisible();
   const event24 = edicio.locator('[data-event="6898888a-8928-4053-b6a8-44bfac1f0158"]');
   await expect(event24).toBeHidden();
@@ -27,6 +27,11 @@ test('resultats amb menú de distàncies i paginació', async ({ page }) => {
   await expect(event24.locator('[data-paginador]')).toContainText(/pàgina 1 de/i);
   await event24.getByRole('button', { name: /següent/i }).click();
   await expect(event24.locator('[data-paginador]')).toContainText(/pàgina 2 de/i);
+
+  // Columna Pos. gèn.: el 1r de la general 2025 (Elies Ballester) és 1r masculí
+  const general = event24.locator('div[data-panel="general"]');
+  await expect(general.getByRole('columnheader', { name: 'Pos. gèn.' })).toBeVisible();
+  await expect(general.locator('tbody tr[data-nom]').first()).toContainText('1r M');
 
   // Cerca per nom
   await event24.locator('[data-cerca]').fill('ballester');

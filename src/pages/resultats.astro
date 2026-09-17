@@ -17,7 +17,14 @@ type Edicio = {
   resultatsLinks?: { titol?: string; url?: string }[];
 };
 
-type TaulaEvent = { nom: string; eventId: string; enllac: string; cls: Classificacio };
+type TaulaEvent = {
+  nom: string;
+  eventId: string;
+  enllac: string;
+  cls: Classificacio;
+  /** Dorsal → posició relativa per gènere ("1r M", "8a F") */
+  mapaGenere: Map<string, string>;
+};
 
 const edicions = await sanity.fetch<Edicio[]>(queries.edicionsResultats);
 // Mateix criteri que la home: una edició compta com a passada el dia de la cursa a les 12:00.
@@ -27,6 +34,10 @@ const passades = edicions.filter((e) => {
   return Date.now() >= new Date(`${e.data}T12:00:00`).getTime();
 });
 const teDades = (e: Edicio) => !!e.resultatsEmbed || (e.resultatsLinks?.length ?? 0) > 0;
+
+// Ordinal català: 1r, 2n, 3r, 4t… / 1a, 2a…
+const ordinal = (n: number, genere: 'M' | 'F') =>
+  genere === 'F' ? `${n}a` : `${n}${n === 1 ? 'r' : n === 2 ? 'n' : n === 3 ? 'r' : 't'}`;
 
 // Taules API (build-time): per edició sense legacy forçat i amb events.
 // Si l'API falla, l'edició cau al legacy automàticament.
@@ -38,11 +49,15 @@ for (const e of edicions) {
     if (!ev.eventId) continue;
     const cls = await obteClassificacio(ev.eventId);
     if (cls) {
+      const mapaGenere = new Map<string, string>();
+      for (const f of cls.masculina) mapaGenere.set(f.dorsal, `${ordinal(f.pos, 'M')} M`);
+      for (const f of cls.femenina) mapaGenere.set(f.dorsal, `${ordinal(f.pos, 'F')} F`);
       llista.push({
         nom: ev.nom ?? 'General',
         eventId: ev.eventId,
         enllac: e.resultatsEmbed ? `${e.resultatsEmbed}/${ev.eventId}/results` : 'https://sportmaniacs.com/',
         cls,
+        mapaGenere,
       });
     }
   }
@@ -95,7 +110,7 @@ const CATEGORIES = [
                             class="rounded-lg border border-stone-200 bg-stone-50 px-5 py-4 text-left shadow-sm transition hover:border-fau-500 hover:shadow"
                           >
                             <span class="font-display block text-lg font-bold">{t.nom}</span>
-                            <span class="mt-0.5 block text-sm text-stone-600">{t.cls.total} finishers</span>
+                            <span class="mt-0.5 block text-sm text-stone-600">{t.cls.total} arribats a meta</span>
                           </button>
                         ))}
                       </div>
@@ -147,9 +162,12 @@ const CATEGORIES = [
                               <div data-panel={c.id} hidden={c.id !== 'general'} role="tabpanel">
                                 <table class="mt-2 w-full text-sm">
                                   <thead>
-                                    <tr class="border-b border-stone-200 text-left text-xs uppercase tracking-wider text-stone-500">
-                                      <th scope="col" class="px-4 py-2 font-semibold">Pos</th>
-                                      <th scope="col" class="hidden px-2 py-2 font-semibold sm:table-cell">Dorsal</th>
+                              <tr class="border-b border-stone-200 text-left text-xs uppercase tracking-wider text-stone-500">
+                                <th scope="col" class="px-4 py-2 font-semibold">Pos.</th>
+                                {c.id === 'general' && (
+                                  <th scope="col" class="hidden px-2 py-2 font-semibold sm:table-cell">Pos. gèn.</th>
+                                )}
+                                <th scope="col" class="hidden px-2 py-2 font-semibold sm:table-cell">Dorsal</th>
                                       <th scope="col" class="px-2 py-2 font-semibold">Nom</th>
                                       <th scope="col" class="hidden px-2 py-2 font-semibold md:table-cell">Club</th>
                                       <th scope="col" class="px-4 py-2 text-right font-semibold">Temps</th>
@@ -162,18 +180,23 @@ const CATEGORIES = [
                                           <span
                                             class={`inline-flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${f.pos <= 3 ? 'bg-fau-500 text-night-950' : 'bg-stone-100 text-stone-700'}`}
                                           >
-                                            {f.pos}
-                                          </span>
-                                        </td>
-                                        <td class="hidden px-2 py-2 tabular-nums text-stone-500 sm:table-cell">{f.dorsal}</td>
+                                      {f.pos}
+                                    </span>
+                                  </td>
+                                  {c.id === 'general' && (
+                                    <td class="hidden px-2 py-2 tabular-nums text-stone-500 sm:table-cell">
+                                      {t.mapaGenere.get(f.dorsal) ?? '—'}
+                                    </td>
+                                  )}
+                                  <td class="hidden px-2 py-2 tabular-nums text-stone-500 sm:table-cell">{f.dorsal}</td>
                                         <td class="px-2 py-2 font-semibold">{f.nom}</td>
                                         <td class="hidden px-2 py-2 text-stone-600 md:table-cell">{f.club || '—'}</td>
                                         <td class="px-4 py-2 text-right tabular-nums font-semibold">{f.temps}</td>
                                       </tr>
                                     ))}
-                                    <tr data-buida hidden>
-                                      <td colspan={5} class="px-4 py-6 text-center text-stone-500">Cap corredor coincideix amb la cerca.</td>
-                                    </tr>
+                              <tr data-buida hidden>
+                                <td colspan={c.id === 'general' ? 6 : 5} class="px-4 py-6 text-center text-stone-500">Cap corredor coincideix amb la cerca.</td>
+                              </tr>
                                   </tbody>
                                 </table>
                               </div>
