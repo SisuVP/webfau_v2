@@ -155,10 +155,10 @@ const jsonLd = {
           loading="eager"
           fetchpriority="high"
           quality={70}
-          class="absolute inset-0 h-full w-full object-cover opacity-50 md:opacity-40"
+          class="absolute inset-0 h-full w-full object-cover opacity-40"
         />
       )}
-      <div class="absolute inset-0 bg-gradient-to-b from-night-950/50 via-night-950/20 to-night-950 md:from-night-950/60 md:via-night-950/30"></div>
+      <div class="absolute inset-0 bg-gradient-to-b from-night-950/60 via-night-950/30 to-night-950"></div>
       <div class="relative mx-auto max-w-6xl px-4 pb-12 pt-24 text-center md:pb-28 md:pt-40">
         <p class="inline-block max-w-full rounded-full border border-fau-400/40 bg-fau-500/15 px-3 py-1 font-display text-xs font-semibold uppercase tracking-[0.15em] text-fau-400 sm:px-4 sm:text-sm sm:tracking-[0.2em]">
           {numEdicio} edició — {dataFormatejada}
@@ -170,20 +170,20 @@ const jsonLd = {
           Tres recorreguts pels corriols del Fau, la carena i les riberes de Maçanet de Cabrenys.
           Tria el teu repte.
         </p>
-        <div class="mt-6 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:flex-wrap sm:items-center md:mt-8" data-cta data-llindar={llindarCursa?.toISOString() ?? ''}>
-          <div data-cta-pre class={`flex w-full flex-col items-stretch justify-center gap-3 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center ${cursaPassadaBuild ? 'hidden' : ''}`}>
-            <a href="/pagina/inscripcions" class="rounded-full bg-fau-500 px-6 py-2.5 text-center font-display text-base font-semibold uppercase tracking-wide text-night-950 transition hover:bg-fau-400 md:px-8 md:py-3 md:text-lg">
+        <div class="mt-8 flex flex-wrap justify-center gap-3" data-cta data-llindar={llindarCursa?.toISOString() ?? ''}>
+          <div data-cta-pre class={`flex flex-wrap justify-center gap-3 ${cursaPassadaBuild ? 'hidden' : ''}`}>
+            <a href="/pagina/inscripcions" class="rounded-full bg-fau-500 px-8 py-3 font-display text-lg font-semibold uppercase tracking-wide text-night-950 transition hover:bg-fau-400">
               Inscripcions
             </a>
-            <a href="#curses" class="rounded-full border border-white/30 px-6 py-2.5 text-center font-display text-base font-semibold uppercase tracking-wide text-white transition hover:border-fau-400 hover:text-fau-400 md:px-8 md:py-3 md:text-lg">
+            <a href="#curses" class="rounded-full border border-white/30 px-8 py-3 font-display text-lg font-semibold uppercase tracking-wide text-white transition hover:border-fau-400 hover:text-fau-400">
               Recorreguts
             </a>
           </div>
-          <div data-cta-post class={`flex w-full flex-col items-stretch justify-center gap-3 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center ${cursaPassadaBuild ? '' : 'hidden'}`}>
-            <a href="/resultats" class="rounded-full bg-fau-500 px-6 py-2.5 text-center font-display text-base font-semibold uppercase tracking-wide text-night-950 transition hover:bg-fau-400 md:px-8 md:py-3 md:text-lg">
+          <div data-cta-post class={`flex flex-wrap justify-center gap-3 ${cursaPassadaBuild ? '' : 'hidden'}`}>
+            <a href="/resultats" class="rounded-full bg-fau-500 px-8 py-3 font-display text-lg font-semibold uppercase tracking-wide text-night-950 transition hover:bg-fau-400">
               Resultats
             </a>
-            <a href="/imatges" class="rounded-full border border-white/30 px-6 py-2.5 text-center font-display text-base font-semibold uppercase tracking-wide text-white transition hover:border-fau-400 hover:text-fau-400 md:px-8 md:py-3 md:text-lg">
+            <a href="/imatges" class="rounded-full border border-white/30 px-8 py-3 font-display text-lg font-semibold uppercase tracking-wide text-white transition hover:border-fau-400 hover:text-fau-400">
               Imatges
             </a>
           </div>
