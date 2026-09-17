@@ -8,11 +8,25 @@ interface Props {
   sizes?: string;
   class?: string;
   loading?: 'lazy' | 'eager';
+  fetchpriority?: 'high' | 'low' | 'auto';
+  decoding?: 'async' | 'sync' | 'auto';
+  quality?: number;
 }
 
 // Les URL de Sanity arriben amb paràmetres (?w=...): Image ja genera les
 // mides i formats, així que passem la URL neta.
-const { src, alt, widths = [400, 800, 1200], sizes, class: cls, loading = 'lazy' } = Astro.props;
+// quality 70 per defecte: equilibri pes/qualitat (~30-40% menys que 80).
+const {
+  src,
+  alt,
+  widths = [400, 800, 1200],
+  sizes,
+  class: cls,
+  loading = 'lazy',
+  fetchpriority,
+  decoding = 'async',
+  quality = 70,
+} = Astro.props;
 const neta = src.split('?')[0];
 ---
 <Image
@@ -22,5 +36,8 @@ const neta = src.split('?')[0];
   sizes={sizes ?? `(max-width: 800px) 100vw, ${Math.max(...widths)}px`}
   class={cls}
   loading={loading}
+  fetchpriority={fetchpriority}
+  decoding={decoding}
+  quality={quality}
   inferSize
 />

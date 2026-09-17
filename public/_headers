@@ -1,0 +1,11 @@
+# Capçaleres de seguretat (format Cloudflare Pages / Netlify-style).
+# S'apliquen només si l'allotjament les respecta; si no, són ignorades.
+# CSP deliberadament EXCLÒS: el lloc usa scripts inline (menú, CTA,
+# façana del mapa, JSON-LD) i caldria una política amb hashes provada
+# a `test` abans d'activar-la. HSTS sense includeSubDomains per no
+# afectar subdominis que no controlem.
+/*
+  Strict-Transport-Security: max-age=63072000
+  X-Frame-Options: SAMEORIGIN
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin

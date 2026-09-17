@@ -14,6 +14,11 @@ import '@fontsource/inter/500.css';
 import '@fontsource/inter/600.css';
 import '@fontsource/inter/700.css';
 import '@fontsource/inter/800.css';
+// Preload dels 2 woff2 crítics (hero H1 Oswald 700 + cos Inter 400,
+// subset llatí que cobreix el català). ?url fa que Vite resolgui el
+// hash de dist en build: no es trenquen mai les rutes.
+import oswald700 from '@fontsource/oswald/files/oswald-latin-700-normal.woff2?url';
+import inter400 from '@fontsource/inter/files/inter-latin-400-normal.woff2?url';
 
 const {
   title = 'Cursa del Fau — Més que una cursa de muntanya',
@@ -47,6 +52,8 @@ const {
       </>
     )}
     <link rel="preconnect" href="https://cdn.sanity.io" crossorigin />
+    <link rel="preload" href={oswald700} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={inter400} as="font" type="font/woff2" crossorigin />
     {jsonLd && (
       <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     )}

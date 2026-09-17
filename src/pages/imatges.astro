@@ -20,15 +20,30 @@ const ambGaleries = edicions.filter((e) => e.galeries?.length);
     {ambGaleries.length === 0 && (
       <p class="mt-4 text-stone-600">Encara no hi ha galeries publicades.</p>
     )}
-    {ambGaleries.map((e) => (
+    {ambGaleries.map((e, eIdx) => (
       <section class="mt-10">
         <h2 class="font-display text-2xl font-bold">Edició {e.any}</h2>
         <ul class="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-          {(e.galeries ?? []).map((g) => (
+          {(e.galeries ?? []).map((g, gIdx) => (
             <li class="overflow-hidden rounded-lg border border-stone-200 bg-white shadow-sm">
-              <a href={g.url} target="_blank" rel="noopener" title={g.titol}>
+              <a
+                href={g.url}
+                target="_blank"
+                rel="noopener"
+                title={`${g.titol} — Edició ${e.any}`}
+                aria-label={`${g.titol} — Edició ${e.any}`}
+              >
                 {g.portadaUrl && (
-                  <Imatge src={g.portadaUrl} alt={g.titol ?? ''} widths={[400, 800]} sizes="(max-width: 640px) 100vw, 400px" class="h-48 w-full object-cover" />
+                  <Imatge
+                    src={g.portadaUrl}
+                    alt=""
+                    widths={[400, 800]}
+                    sizes="(max-width: 640px) 100vw, 400px"
+                    quality={65}
+                    loading={eIdx === 0 && gIdx === 0 ? 'eager' : 'lazy'}
+                    fetchpriority={eIdx === 0 && gIdx === 0 ? 'high' : undefined}
+                    class="h-48 w-full object-cover"
+                  />
                 )}
                 <p class="p-4 text-center text-sm font-semibold">{g.titol}</p>
               </a>
