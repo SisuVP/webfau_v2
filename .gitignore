@@ -18,6 +18,8 @@ seed-*.mjs
 # artefactes de test
 test-results/
 playwright-report/
+# informes PageSpeed (PDF + captures, ~60 MB)
+testos/
 
 # dependencies
 node_modules/
