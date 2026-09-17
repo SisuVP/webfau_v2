@@ -128,7 +128,7 @@ const CATEGORIES = [
                             )}
                             <h3 class="font-display text-lg font-bold">{t.nom}</h3>
                           </div>
-                          <div class="flex gap-2" role="tablist" aria-label={`Classificació ${t.nom}`}>
+                          <div class="flex max-w-full flex-wrap gap-2" role="tablist" aria-label={`Classificació ${t.nom}`}>
                             {CATEGORIES.map(
                               (c) =>
                                 t.cls[c.id].length > 0 && (
@@ -137,7 +137,7 @@ const CATEGORIES = [
                                     role="tab"
                                     data-tab={c.id}
                                     aria-selected={c.id === 'general' ? 'true' : 'false'}
-                                    class="rounded-full border border-stone-300 px-4 py-1.5 text-sm font-semibold text-stone-600 aria-selected:border-night-950 aria-selected:bg-night-950 aria-selected:text-white"
+                                    class="rounded-full border border-stone-300 px-3 py-1.5 text-[13px] font-semibold text-stone-600 sm:px-4 sm:text-sm aria-selected:border-night-950 aria-selected:bg-night-950 aria-selected:text-white"
                                   >
                                     {c.etiqueta}
                                   </button>
@@ -331,7 +331,7 @@ const CATEGORIES = [
         const files = Array.from(actiu.querySelectorAll('tbody tr[data-nom]')) as HTMLElement[];
         const coincidents = files.filter((tr) => {
           if (q === '') return true;
-          const txt = `${tr.dataset.nom ?? ''} ${tr.dataset.dorsal ?? ''}`.toLowerCase();
+          const txt = normalitza(`${tr.dataset.nom ?? ''} ${tr.dataset.dorsal ?? ''}`);
           return txt.includes(q);
         });
         const total = Math.max(1, Math.ceil(coincidents.length / PER_PAGINA));
@@ -358,8 +358,14 @@ const CATEGORIES = [
           render();
         });
       });
+      // Cerca insensible a accents: "marti" troba "Martí" (NFD + sense diacrítics)
+      const normalitza = (s: string) =>
+        s
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '');
       cerca?.addEventListener('input', () => {
-        q = cerca.value.trim().toLowerCase();
+        q = normalitza(cerca.value.trim());
         pagina = 1;
         render();
       });

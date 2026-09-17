@@ -37,6 +37,11 @@ test('resultats amb menú de distàncies i paginació', async ({ page }) => {
   await event24.locator('[data-cerca]').fill('ballester');
   await expect(event24.locator('tbody tr[data-nom]:visible')).toHaveCount(1);
 
+  // Cerca insensible a accents: "cortes" troba "CORTÉS"
+  await event24.locator('[data-cerca]').fill('cortes');
+  await expect(event24.locator('tbody tr[data-nom]:visible')).toHaveCount(1);
+  await expect(event24.locator('tbody tr[data-nom]:visible').first()).toContainText(/cortés/i);
+
   // Tornar al menú
   await event24.getByRole('button', { name: /distàncies/i }).click();
   await expect(edicio.locator('[data-menu]')).toBeVisible();
