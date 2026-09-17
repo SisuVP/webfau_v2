@@ -51,6 +51,29 @@ export const edicio = defineType({
       ],
     }),
     defineField({
+      name: 'resultatsEvents',
+      title: 'Resultats (events Sportmaniacs)',
+      description:
+        'Un per distància. L’eventId és l’UUID del botó "Veure classificacions" (URL .../races/<cursa>/<eventId>/results). Buit = sense taula API.',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            defineField({name: 'nom', title: 'Nom (ex. 24 km)', type: 'string'}),
+            defineField({name: 'eventId', title: 'Event ID (UUID)', type: 'string'}),
+          ],
+        },
+      ],
+    }),
+    defineField({
+      name: 'resultatsLegacy',
+      title: 'Resultats legacy (força l’iframe)',
+      description: 'Si està activat, es mostra l’iframe antic encara que la taula API funcioni.',
+      type: 'boolean',
+      initialValue: false,
+    }),
+    defineField({
       name: 'galeries',
       title: 'Galeries d’imatges',
       type: 'array',

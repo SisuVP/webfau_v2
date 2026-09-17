@@ -4,14 +4,20 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Icona from '../components/Icona.astro';
 import { sanity, queries } from '../lib/sanity';
+import { obteClassificacio, type Classificacio } from '../lib/resultats';
 
+type EventRes = { nom?: string; eventId?: string };
 type Edicio = {
   any: number;
   estat?: string;
   data?: string;
   resultatsEmbed?: string;
+  resultatsLegacy?: boolean;
+  resultatsEvents?: EventRes[];
   resultatsLinks?: { titol?: string; url?: string }[];
 };
+
+type TaulaEvent = { nom: string; eventId: string; enllac: string; cls: Classificacio };
 
 const edicions = await sanity.fetch<Edicio[]>(queries.edicionsResultats);
 // Mateix criteri que la home: una edició compta com a passada el dia de la cursa a les 12:00.
@@ -21,6 +27,35 @@ const passades = edicions.filter((e) => {
   return Date.now() >= new Date(`${e.data}T12:00:00`).getTime();
 });
 const teDades = (e: Edicio) => !!e.resultatsEmbed || (e.resultatsLinks?.length ?? 0) > 0;
+
+// Taules API (build-time): per edició sense legacy forçat i amb events.
+// Si l'API falla, l'edició cau al legacy automàticament.
+const taules = new Map<number, TaulaEvent[]>();
+for (const e of edicions) {
+  if (e.resultatsLegacy || !e.resultatsEvents?.length) continue;
+  const llista: TaulaEvent[] = [];
+  for (const ev of e.resultatsEvents) {
+    if (!ev.eventId) continue;
+    const cls = await obteClassificacio(ev.eventId);
+    if (cls) {
+      llista.push({
+        nom: ev.nom ?? 'General',
+        eventId: ev.eventId,
+        enllac: e.resultatsEmbed ? `${e.resultatsEmbed}/${ev.eventId}/results` : 'https://sportmaniacs.com/',
+        cls,
+      });
+    }
+  }
+  if (llista.length) taules.set(e.any, llista);
+}
+const usaApi = (e: Edicio) => taules.has(e.any);
+const dataSnapshot = new Date().toLocaleDateString('ca-ES', { day: 'numeric', month: 'numeric', year: 'numeric' });
+
+const CATEGORIES = [
+  { id: 'general', etiqueta: 'General' },
+  { id: 'masculina', etiqueta: 'Masculina' },
+  { id: 'femenina', etiqueta: 'Femenina' },
+] as const;
 ---
 <Layout title="Resultats — Cursa del Fau">
   <Header />
@@ -44,7 +79,97 @@ const teDades = (e: Edicio) => !!e.resultatsEmbed || (e.resultatsLinks?.length ?
             )}
           </div>
 
-          {teDades(e) ? (
+          {usaApi(e) ? (
+            <>
+              {(taules.get(e.any) ?? []).map((t) => (
+                <div class="mt-6 overflow-hidden rounded-lg border border-stone-200 bg-white" data-classificacio>
+                  <div class="flex flex-wrap items-center justify-between gap-3 border-b border-stone-200 bg-stone-50 px-4 py-3">
+                    <h3 class="font-display text-lg font-bold">{t.nom}</h3>
+                    <div class="flex gap-2" role="tablist" aria-label={`Classificació ${t.nom}`}>
+                      {CATEGORIES.map(
+                        (c) =>
+                          t.cls[c.id].length > 0 && (
+                            <button
+                              type="button"
+                              role="tab"
+                              data-tab={c.id}
+                              aria-selected={c.id === 'general' ? 'true' : 'false'}
+                              class="rounded-full border border-stone-300 px-4 py-1.5 text-sm font-semibold text-stone-600 aria-selected:border-night-950 aria-selected:bg-night-950 aria-selected:text-white"
+                            >
+                              {c.etiqueta}
+                            </button>
+                          )
+                      )}
+                    </div>
+                  </div>
+                  <div class="px-4 pt-3">
+                    <input
+                      type="search"
+                      data-cerca
+                      placeholder="Cerca per nom o dorsal…"
+                      aria-label={`Cerca a la classificació ${t.nom}`}
+                      class="w-full rounded-full border border-stone-300 px-4 py-2 text-sm focus:border-fau-500 focus:outline-none"
+                    />
+                  </div>
+                  {CATEGORIES.map(
+                    (c) =>
+                      t.cls[c.id].length > 0 && (
+                        <div data-panel={c.id} hidden={c.id !== 'general'} role="tabpanel">
+                          <table class="mt-2 w-full text-sm">
+                            <thead>
+                              <tr class="border-b border-stone-200 text-left text-xs uppercase tracking-wider text-stone-500">
+                                <th scope="col" class="px-4 py-2 font-semibold">Pos</th>
+                                <th scope="col" class="hidden px-2 py-2 font-semibold sm:table-cell">Dorsal</th>
+                                <th scope="col" class="px-2 py-2 font-semibold">Nom</th>
+                                <th scope="col" class="hidden px-2 py-2 font-semibold md:table-cell">Club</th>
+                                <th scope="col" class="px-4 py-2 text-right font-semibold">Temps</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {t.cls[c.id].map((f) => (
+                                <tr data-nom={f.nom} data-dorsal={f.dorsal} class={`border-b border-stone-100 ${f.pos <= 3 ? 'bg-orange-50' : ''}`}>
+                                  <td class="px-4 py-2">
+                                    <span
+                                      class={`inline-flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${f.pos <= 3 ? 'bg-fau-500 text-night-950' : 'bg-stone-100 text-stone-700'}`}
+                                    >
+                                      {f.pos}
+                                    </span>
+                                  </td>
+                                  <td class="hidden px-2 py-2 tabular-nums text-stone-500 sm:table-cell">{f.dorsal}</td>
+                                  <td class="px-2 py-2 font-semibold">{f.nom}</td>
+                                  <td class="hidden px-2 py-2 text-stone-600 md:table-cell">{f.club || '—'}</td>
+                                  <td class="px-4 py-2 text-right tabular-nums font-semibold">{f.temps}</td>
+                                </tr>
+                              ))}
+                              <tr data-buida hidden>
+                                <td colspan={5} class="px-4 py-6 text-center text-stone-500">Cap corredor coincideix amb la cerca.</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      )
+                  )}
+                  <p class="px-4 py-3 text-xs text-stone-500">
+                    Dades de Sportmaniacs · {dataSnapshot} ·{' '}
+                    <a href={t.enllac} target="_blank" rel="noopener" class="font-semibold text-fau-600 underline">
+                      Classificació completa amb filtres
+                    </a>
+                  </p>
+                </div>
+              ))}
+              {(e.resultatsLinks?.length ?? 0) > 0 && (
+                <ul class="mt-4 flex flex-wrap gap-3">
+                  {(e.resultatsLinks ?? []).map((l) => (
+                    <li>
+                      <a href={l.url} target="_blank" rel="noopener" class="inline-flex items-center gap-2 rounded-full bg-stone-900 px-5 py-2 text-sm font-semibold text-white hover:bg-stone-700">
+                        {l.titol} <Icona nom="descarrega" class="h-4 w-4" />
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </>
+          ) : teDades(e) ? (
             <>
               {(e.resultatsLinks?.length ?? 0) > 0 && (
                 <ul class="mt-4 flex flex-wrap gap-3">
@@ -78,4 +203,37 @@ const teDades = (e: Edicio) => !!e.resultatsEmbed || (e.resultatsLinks?.length ?
   </main>
   </div>
   <Footer />
+  <script>
+    // Pestanyes General/Masculina/Femenina + cercador per nom o dorsal.
+    // Tot el filtratge és client sobre les taules generades en build.
+    document.querySelectorAll('[data-classificacio]').forEach((bloc) => {
+      const tabs = Array.from(bloc.querySelectorAll('[data-tab]'));
+      const panels = Array.from(bloc.querySelectorAll('[data-panel]'));
+      tabs.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          tabs.forEach((b) => b.setAttribute('aria-selected', b === btn ? 'true' : 'false'));
+          panels.forEach((p) => {
+            (p as HTMLElement).hidden = (p as HTMLElement).dataset.panel !== (btn as HTMLElement).dataset.tab;
+          });
+          // Reaplica la cerca en canviar de pestanya
+          bloc.querySelector('[data-cerca]')?.dispatchEvent(new Event('input'));
+        });
+      });
+      const cerca = bloc.querySelector('[data-cerca]') as HTMLInputElement | null;
+      cerca?.addEventListener('input', () => {
+        const q = cerca.value.trim().toLowerCase();
+        panels.forEach((p) => {
+          let visibles = 0;
+          p.querySelectorAll('tbody tr[data-nom]').forEach((tr) => {
+            const el = tr as HTMLElement;
+            const txt = `${el.dataset.nom ?? ''} ${el.dataset.dorsal ?? ''}`.toLowerCase();
+            el.hidden = q !== '' && !txt.includes(q);
+            if (!el.hidden) visibles++;
+          });
+          const buida = p.querySelector('[data-buida]') as HTMLElement | null;
+          if (buida) buida.hidden = visibles > 0;
+        });
+      });
+    });
+  </script>
 </Layout>
