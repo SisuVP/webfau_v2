@@ -12,9 +12,10 @@ const H = 400;
 // A dalt dues carrils per a etiquetes d'avituallament sense tocar la corba.
 const MARGE = { esq: 88, dre: 20, sup: 82, inf: 54 };
 
-// Verd taronja del botó Inscriu-t'hi (fau-500); el punt, fosc per destacar.
+// Taronja del botó Inscriu-t'hi (fau-500), també als punts com a la llegenda;
+// l'anell blanc els separa de la corba.
 const COLOR_CORBA = '#dd9933';
-const COLOR_PUNT = '#0b100e';
+const COLOR_PUNT = '#dd9933';
 
 function haversineKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const R = 6371;
