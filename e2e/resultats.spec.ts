@@ -31,7 +31,7 @@ test('resultats amb menú de distàncies i paginació', async ({ page }) => {
   // Columna Pos. gèn.: el 1r de la general 2025 (Elies Ballester) és 1r masculí
   const general = event24.locator('div[data-panel="general"]');
   await expect(general.getByRole('columnheader', { name: 'Pos. gèn.' })).toBeVisible();
-  await expect(general.locator('tbody tr[data-nom]').first()).toContainText('1r M');
+  await expect(general.locator('tbody tr[data-nom]').first()).toContainText('1 M');
 
   // Cerca per nom
   await event24.locator('[data-cerca]').fill('ballester');

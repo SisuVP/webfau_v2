@@ -35,9 +35,7 @@ const passades = edicions.filter((e) => {
 });
 const teDades = (e: Edicio) => !!e.resultatsEmbed || (e.resultatsLinks?.length ?? 0) > 0;
 
-// Ordinal català: 1r, 2n, 3r, 4t… / 1a, 2a…
-const ordinal = (n: number, genere: 'M' | 'F') =>
-  genere === 'F' ? `${n}a` : `${n}${n === 1 ? 'r' : n === 2 ? 'n' : n === 3 ? 'r' : 't'}`;
+
 
 // Taules API (build-time): per edició sense legacy forçat i amb events.
 // Si l'API falla, l'edició cau al legacy automàticament.
@@ -50,8 +48,8 @@ for (const e of edicions) {
     const cls = await obteClassificacio(ev.eventId);
     if (cls) {
       const mapaGenere = new Map<string, string>();
-      for (const f of cls.masculina) mapaGenere.set(f.dorsal, `${ordinal(f.pos, 'M')} M`);
-      for (const f of cls.femenina) mapaGenere.set(f.dorsal, `${ordinal(f.pos, 'F')} F`);
+      for (const f of cls.masculina) mapaGenere.set(f.dorsal, `${f.pos} M`);
+      for (const f of cls.femenina) mapaGenere.set(f.dorsal, `${f.pos} F`);
       llista.push({
         nom: ev.nom ?? 'General',
         eventId: ev.eventId,
