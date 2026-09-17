@@ -10,7 +10,7 @@ const W = 1200;
 const H = 400;
 // Esquerra ampla: les etiquetes Y ("1.250 m") no queden tallades.
 // A dalt dues carrils per a etiquetes d'avituallament sense tocar la corba.
-const MARGE = { esq: 88, dre: 20, sup: 82, inf: 54 };
+const MARGE = { esq: 88, dre: 20, sup: 100, inf: 66 };
 
 // Taronja del botó Inscriu-t'hi (fau-500), també als punts com a la llegenda;
 // l'anell blanc els separa de la corba.
@@ -116,9 +116,10 @@ export function generaSvgPerfil(
     min -= 5;
     max += 5;
   }
-  // Més aire a dalt (15%) perquè el pic no toqui les etiquetes
-  min -= (max - min) * 0.08;
-  max += (max - min) * 0.15;
+  // Aire al voltant de la corba: ni el pic toca les etiquetes
+  // ni la vall toca l'eix X
+  min -= (max - min) * 0.12;
+  max += (max - min) * 0.2;
 
   const ample = W - MARGE.esq - MARGE.dre;
   const alt = H - MARGE.sup - MARGE.inf;
@@ -140,7 +141,7 @@ export function generaSvgPerfil(
   let eixX = '';
   for (let v = 0; v <= totalKm + 1e-9; v += pasX) {
     const xx = x(Math.min(v, totalKm));
-    eixX += `<text x="${xx.toFixed(1)}" y="${H - 10}" text-anchor="middle" font-size="20" fill="#57534e">${v % 1 === 0 ? v : v.toFixed(1)} km</text>`;
+    eixX += `<text x="${xx.toFixed(1)}" y="${H - 18}" text-anchor="middle" font-size="20" fill="#57534e">${v % 1 === 0 ? v : v.toFixed(1)} km</text>`;
   }
 
   // Marcadors (avituallaments): etiqueta alternada per evitar solapaments
@@ -149,7 +150,7 @@ export function generaSvgPerfil(
   marcadors.forEach((mc, i) => {
     const xx = x(mc.km);
     const yyCorba = y(eleAPunt(punts, mc.km));
-    const yEtiq = i % 2 === 0 ? 22 : 44;
+    const yEtiq = i % 2 === 0 ? 30 : 56;
     const ancora = xx < MARGE.esq + 40 ? 'start' : xx > W - MARGE.dre - 100 ? 'end' : 'middle';
     const xEtiq = ancora === 'middle' ? xx : ancora === 'start' ? xx + 6 : xx - 6;
     capaMarcadors += `<g><title>${escapaXml(mc.etiqueta)} · km ${mc.km}</title><line x1="${xx.toFixed(1)}" y1="${MARGE.sup}" x2="${xx.toFixed(1)}" y2="${(H - MARGE.inf).toFixed(1)}" stroke="${COLOR_CORBA}" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.8"/><circle cx="${xx.toFixed(1)}" cy="${yyCorba.toFixed(1)}" r="6" fill="${COLOR_PUNT}" stroke="#fff" stroke-width="2.5"/><text x="${xEtiq.toFixed(1)}" y="${yEtiq}" text-anchor="${ancora}" font-size="17" font-weight="600" fill="#1c1917">${escapaXml(mc.etiqueta)}</text></g>`;
