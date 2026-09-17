@@ -84,6 +84,12 @@ export const edicio = defineType({
       ],
     }),
     defineField({
+      name: 'resultatsFontNom',
+      title: 'Resultats (nom del proveïdor)',
+      description: 'Ex. Sportmaniacs, CronoCheck. Buit = Sportmaniacs.',
+      type: 'string',
+    }),
+    defineField({
       name: 'resultatsMode',
       title: 'Resultats (font)',
       description: 'JSON = snapshot immutable · API = directe de Sportmaniacs · iframe = incrustació antiga.',

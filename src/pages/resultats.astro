@@ -14,6 +14,7 @@ type Edicio = {
   data?: string;
   resultatsEmbed?: string;
   resultatsMode?: string;
+  resultatsFontNom?: string;
   resultatsEvents?: EventRes[];
   resultatsSnapshots?: SnapRes[];
   resultatsLinks?: { titol?: string; url?: string }[];
@@ -23,12 +24,13 @@ type FontResultats = 'json' | 'api';
 type TaulaEvent = {
   nom: string;
   eventId: string;
-  enllac: string;
   cls: Classificacio;
   /** Dorsal → posició relativa per gènere ("1 M", "8 F") */
   mapaGenere: Map<string, string>;
   font: FontResultats;
   dataRef: string;
+  fontNom: string;
+  enllac: string;
 };
 
 const edicions = await sanity.fetch<Edicio[]>(queries.edicionsResultats);
@@ -117,14 +119,12 @@ for (const e of edicions) {
       llista.push({
         nom: d.nom || 'General',
         eventId: d.ev?.eventId ?? '',
-        enllac:
-          e.resultatsEmbed && d.ev?.eventId
-            ? `${e.resultatsEmbed}/${d.ev.eventId}/results`
-            : 'https://sportmaniacs.com/',
+        enllac: e.resultatsEmbed ?? '',
         cls,
         mapaGenere,
         font,
         dataRef,
+        fontNom: e.resultatsFontNom ?? 'Sportmaniacs',
       });
     }
   }
@@ -290,10 +290,15 @@ const CATEGORIES = [
                           </button>
                         </div>
                         <p class="px-4 pb-3 text-xs text-stone-500">
-                          Dades de Sportmaniacs · {t.font === 'json' ? `snapshot del ${t.dataRef}` : `directe del ${t.dataRef}`} ·{' '}
-                          <a href={t.enllac} target="_blank" rel="noopener" class="font-semibold text-fau-600 underline">
-                            Classificació completa amb filtres
-                          </a>
+                          Dades de {t.fontNom} · {t.font === 'json' ? `snapshot del ${t.dataRef}` : `directe del ${t.dataRef}`}
+                          {t.enllac && (
+                            <>
+                              {' '}·{' '}
+                              <a href={t.enllac} target="_blank" rel="noopener" class="font-semibold text-fau-600 underline">
+                                Classificació completa
+                              </a>
+                            </>
+                          )}
                         </p>
                       </div>
                     ))}
