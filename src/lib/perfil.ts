@@ -8,7 +8,13 @@ export type MarcadorPerfil = { km: number; etiqueta: string };
 
 const W = 1200;
 const H = 400;
-const MARGE = { esq: 58, dre: 18, sup: 34, inf: 36 };
+// Esquerra ampla: les etiquetes Y ("1.250 m") no queden tallades.
+// A dalt dues carrils per a etiquetes d'avituallament sense tocar la corba.
+const MARGE = { esq: 88, dre: 20, sup: 62, inf: 38 };
+
+// Verd taronja del botó Inscriu-t'hi (fau-500); el punt, fosc per destacar.
+const COLOR_CORBA = '#dd9933';
+const COLOR_PUNT = '#0b100e';
 
 function haversineKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const R = 6371;
@@ -109,9 +115,9 @@ export function generaSvgPerfil(
     min -= 5;
     max += 5;
   }
-  const coixi = (max - min) * 0.08;
-  min -= coixi;
-  max += coixi;
+  // Més aire a dalt (15%) perquè el pic no toqui les etiquetes
+  min -= (max - min) * 0.08;
+  max += (max - min) * 0.15;
 
   const ample = W - MARGE.esq - MARGE.dre;
   const alt = H - MARGE.sup - MARGE.inf;
@@ -142,12 +148,12 @@ export function generaSvgPerfil(
   marcadors.forEach((mc, i) => {
     const xx = x(mc.km);
     const yyCorba = y(eleAPunt(punts, mc.km));
-    const yEtiq = i % 2 === 0 ? 16 : 32;
-    const ancora = xx < 90 ? 'start' : xx > W - 110 ? 'end' : 'middle';
+    const yEtiq = i % 2 === 0 ? 22 : 44;
+    const ancora = xx < MARGE.esq + 40 ? 'start' : xx > W - MARGE.dre - 100 ? 'end' : 'middle';
     const xEtiq = ancora === 'middle' ? xx : ancora === 'start' ? xx + 6 : xx - 6;
-    capaMarcadors += `<g><title>${escapaXml(mc.etiqueta)} · km ${mc.km}</title><line x1="${xx.toFixed(1)}" y1="${MARGE.sup}" x2="${xx.toFixed(1)}" y2="${(H - MARGE.inf).toFixed(1)}" stroke="#96600f" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.7"/><circle cx="${xx.toFixed(1)}" cy="${yyCorba.toFixed(1)}" r="6" fill="#96600f" stroke="#fff" stroke-width="2.5"/><text x="${xEtiq.toFixed(1)}" y="${yEtiq}" text-anchor="${ancora}" font-size="16" font-weight="600" fill="#1c1917">${escapaXml(mc.etiqueta)}</text></g>`;
+    capaMarcadors += `<g><title>${escapaXml(mc.etiqueta)} · km ${mc.km}</title><line x1="${xx.toFixed(1)}" y1="${MARGE.sup}" x2="${xx.toFixed(1)}" y2="${(H - MARGE.inf).toFixed(1)}" stroke="${COLOR_CORBA}" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.8"/><circle cx="${xx.toFixed(1)}" cy="${yyCorba.toFixed(1)}" r="6" fill="${COLOR_PUNT}" stroke="#fff" stroke-width="2.5"/><text x="${xEtiq.toFixed(1)}" y="${yEtiq}" text-anchor="${ancora}" font-size="17" font-weight="600" fill="#1c1917">${escapaXml(mc.etiqueta)}</text></g>`;
   });
 
   const gid = `pg-${Math.abs([...opcions.nom].reduce((a, c) => (a * 31 + c.charCodeAt(0)) | 0, 7))}`;
-  return `<svg viewBox="0 0 ${W} ${H}" class="block h-auto w-full" role="img" aria-label="Perfil d'elevació: ${escapaXml(opcions.nom)}"><title>Perfil d'elevació: ${escapaXml(opcions.nom)} (${totalKm.toFixed(1)} km)</title><defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#dd9933" stop-opacity="0.45"/><stop offset="1" stop-color="#dd9933" stop-opacity="0.04"/></linearGradient></defs>${reixeta}${eixX}<path d="${linia} L${x(totalKm).toFixed(1)},${(H - MARGE.inf).toFixed(1)} L${MARGE.esq},${(H - MARGE.inf).toFixed(1)} Z" fill="url(#${gid})"/><path d="${linia}" fill="none" stroke="#96600f" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>${capaMarcadors}</svg>`;
+  return `<svg viewBox="0 0 ${W} ${H}" class="block h-auto w-full" role="img" aria-label="Perfil d'elevació: ${escapaXml(opcions.nom)}"><title>Perfil d'elevació: ${escapaXml(opcions.nom)} (${totalKm.toFixed(1)} km)</title><defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${COLOR_CORBA}" stop-opacity="0.5"/><stop offset="1" stop-color="${COLOR_CORBA}" stop-opacity="0.05"/></linearGradient></defs>${reixeta}${eixX}<path d="${linia} L${x(totalKm).toFixed(1)},${(H - MARGE.inf).toFixed(1)} L${MARGE.esq},${(H - MARGE.inf).toFixed(1)} Z" fill="url(#${gid})"/><path d="${linia}" fill="none" stroke="${COLOR_CORBA}" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>${capaMarcadors}</svg>`;
 }
