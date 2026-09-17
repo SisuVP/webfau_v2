@@ -11,7 +11,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "check": "astro check",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "snapshot:resultats": "node scripts/snapshot-resultats.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",

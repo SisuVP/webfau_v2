@@ -6,5 +6,5 @@ export default defineCliConfig({
     dataset: process.env.SANITY_STUDIO_DATASET,
   },
   studioHost: 'cursadelfau',
-  deployment: {autoUpdates: false},
+  deployment: {autoUpdates: false, appId: 'sqyd5djq09m8z5jqwd617rvy'},
 })

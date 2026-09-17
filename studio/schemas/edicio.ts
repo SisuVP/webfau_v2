@@ -67,11 +67,19 @@ export const edicio = defineType({
       ],
     }),
     defineField({
-      name: 'resultatsLegacy',
-      title: 'Resultats legacy (força l’iframe)',
-      description: 'Si està activat, es mostra l’iframe antic encara que la taula API funcioni.',
-      type: 'boolean',
-      initialValue: false,
+      name: 'resultatsMode',
+      title: 'Resultats (font)',
+      description: 'JSON = snapshot immutable · API = directe de Sportmaniacs · iframe = incrustació antiga.',
+      type: 'string',
+      options: {
+        list: [
+          {title: 'Automàtic (JSON → API → iframe)', value: 'auto'},
+          {title: 'JSON (snapshot)', value: 'json'},
+          {title: 'API (directe)', value: 'api'},
+          {title: 'iframe (legacy)', value: 'iframe'},
+        ],
+      },
+      initialValue: 'auto',
     }),
     defineField({
       name: 'galeries',

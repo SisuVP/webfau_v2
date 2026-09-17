@@ -12,18 +12,21 @@ type Edicio = {
   estat?: string;
   data?: string;
   resultatsEmbed?: string;
-  resultatsLegacy?: boolean;
+  resultatsMode?: string;
   resultatsEvents?: EventRes[];
   resultatsLinks?: { titol?: string; url?: string }[];
 };
 
+type FontResultats = 'json' | 'api';
 type TaulaEvent = {
   nom: string;
   eventId: string;
   enllac: string;
   cls: Classificacio;
-  /** Dorsal → posició relativa per gènere ("1r M", "8a F") */
+  /** Dorsal → posició relativa per gènere ("1 M", "8 F") */
   mapaGenere: Map<string, string>;
+  font: FontResultats;
+  dataRef: string;
 };
 
 const edicions = await sanity.fetch<Edicio[]>(queries.edicionsResultats);
@@ -34,18 +37,66 @@ const passades = edicions.filter((e) => {
   return Date.now() >= new Date(`${e.data}T12:00:00`).getTime();
 });
 const teDades = (e: Edicio) => !!e.resultatsEmbed || (e.resultatsLinks?.length ?? 0) > 0;
+const dataSnapshot = new Date().toLocaleDateString('ca-ES', {day: 'numeric', month: 'numeric', year: 'numeric'});
 
 
 
-// Taules API (build-time): per edició sense legacy forçat i amb events.
-// Si l'API falla, l'edició cau al legacy automàticament.
+// Taules (build-time) amb cascada per edició: JSON (snapshot) → API → iframe.
+// El mode es tria a l'Studio (resultatsMode); 'auto' prova totes les vies.
+async function baixaSnapshot(url: string): Promise<Classificacio | null> {
+  try {
+    const res = await fetch(url, {signal: AbortSignal.timeout(15000)});
+    if (!res.ok) return null;
+    const j = await res.json();
+    if (!j || !Array.isArray(j.general) || !Array.isArray(j.masculina) || !Array.isArray(j.femenina)) return null;
+    return j as Classificacio;
+  } catch {
+    return null;
+  }
+}
+
+const fmtData = (iso: string) =>
+  new Date(iso).toLocaleDateString('ca-ES', {day: 'numeric', month: 'numeric', year: 'numeric'});
+
+const snaps = await sanity.fetch<
+  {nom?: string; eventId?: string; actualitzat?: string; edicioAny?: number; fitxerUrl?: string}[]
+>(queries.classificacions);
+const snapsPerEvent = new Map(
+  (snaps ?? []).filter((s) => s.eventId && s.fitxerUrl).map((s) => [s.eventId as string, s])
+);
+
 const taules = new Map<number, TaulaEvent[]>();
 for (const e of edicions) {
-  if (e.resultatsLegacy || !e.resultatsEvents?.length) continue;
+  const mode = e.resultatsMode ?? 'auto';
+  if (mode === 'iframe' || !e.resultatsEvents?.length) continue;
+  const vies: FontResultats[] = mode === 'auto' ? ['json', 'api'] : [mode as FontResultats];
   const llista: TaulaEvent[] = [];
   for (const ev of e.resultatsEvents) {
     if (!ev.eventId) continue;
-    const cls = await obteClassificacio(ev.eventId);
+    let cls: Classificacio | null = null;
+    let font: FontResultats = 'json';
+    let dataRef = '';
+    for (const via of vies) {
+      if (via === 'json') {
+        const snap = snapsPerEvent.get(ev.eventId);
+        if (snap?.fitxerUrl) {
+          const c = await baixaSnapshot(snap.fitxerUrl);
+          if (c) {
+            cls = c;
+            font = 'json';
+            dataRef = snap.actualitzat ? fmtData(snap.actualitzat) : dataSnapshot;
+          }
+        }
+      } else {
+        const c = await obteClassificacio(ev.eventId);
+        if (c) {
+          cls = c;
+          font = 'api';
+          dataRef = dataSnapshot;
+        }
+      }
+      if (cls) break;
+    }
     if (cls) {
       const mapaGenere = new Map<string, string>();
       for (const f of cls.masculina) mapaGenere.set(f.dorsal, `${f.pos} M`);
@@ -56,13 +107,14 @@ for (const e of edicions) {
         enllac: e.resultatsEmbed ? `${e.resultatsEmbed}/${ev.eventId}/results` : 'https://sportmaniacs.com/',
         cls,
         mapaGenere,
+        font,
+        dataRef,
       });
     }
   }
   if (llista.length) taules.set(e.any, llista);
 }
 const usaApi = (e: Edicio) => taules.has(e.any);
-const dataSnapshot = new Date().toLocaleDateString('ca-ES', { day: 'numeric', month: 'numeric', year: 'numeric' });
 
 const CATEGORIES = [
   { id: 'general', etiqueta: 'General', sencer: 'General', completa: 'general' },
@@ -222,7 +274,7 @@ const CATEGORIES = [
                           </button>
                         </div>
                         <p class="px-4 pb-3 text-xs text-stone-500">
-                          Dades de Sportmaniacs · {dataSnapshot} ·{' '}
+                          Dades de Sportmaniacs · {t.font === 'json' ? `snapshot del ${t.dataRef}` : `directe del ${t.dataRef}`} ·{' '}
                           <a href={t.enllac} target="_blank" rel="noopener" class="font-semibold text-fau-600 underline">
                             Classificació completa amb filtres
                           </a>
