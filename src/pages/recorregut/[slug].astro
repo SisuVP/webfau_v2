@@ -6,6 +6,7 @@ import PortableText from '../../components/PortableText.astro';
 import Icona from '../../components/Icona.astro';
 import Imatge from '../../components/Imatge.astro';
 import { sanity, queries, type Blocs } from '../../lib/sanity';
+import { carregaPerfil, generaSvgPerfil } from '../../lib/perfil';
 
 export async function getStaticPaths() {
   try {
@@ -37,12 +38,24 @@ const r = await sanity.fetch<{
   talls?: Tall[];
   mapaEmbedUrl?: string;
   perfilUrl?: string;
+  trackGpxUrl?: string;
   imatgeUrl?: string;
 }>(queries.recorregutBySlug, { slug });
 
 if (!r) {
   return Astro.redirect('/');
 }
+
+// Perfil SVG generat del GPX en build (fallback: imatge `perfil` del Sanity).
+// Tot plegat dins try/catch implícit: carregaPerfil retorna null si falla.
+const marcadorsPerfil = (r.avituallaments ?? [])
+  .filter((a) => typeof a.km === 'number' && a.punt)
+  .map((a) => ({ km: a.km as number, etiqueta: a.punt as string }));
+const puntsPerfil = r.trackGpxUrl ? await carregaPerfil(r.trackGpxUrl) : null;
+const perfilSvg =
+  puntsPerfil && puntsPerfil.length > 10
+    ? generaSvgPerfil(puntsPerfil, { nom: r.nom, marcadors: marcadorsPerfil })
+    : null;
 
 const fitxa: [string, string][] = [
   ['Distància', r.distanciaKm != null ? `${r.distanciaKm} km` : '—'],
@@ -182,17 +195,31 @@ const jsonLdRec = {
       </section>
     )}
 
-    {r.perfilUrl && (
+    {(perfilSvg || r.perfilUrl) && (
       <section class="mt-6">
         <h2 class="font-display text-xl font-bold uppercase tracking-wide">Perfil</h2>
-        <Imatge
-          src={r.perfilUrl}
-          alt={`Perfil ${r.nom}`}
-          widths={[768, 1200]}
-          sizes="(max-width: 768px) 100vw, 768px"
-          quality={70}
-          class="mt-4 w-full rounded-lg border border-stone-200 bg-white shadow"
-        />
+        <div class="mt-4 overflow-hidden rounded-lg border border-stone-200 bg-white shadow">
+          {perfilSvg ? (
+            <Fragment set:html={perfilSvg} />
+          ) : (
+            r.perfilUrl && (
+              <Imatge
+                src={r.perfilUrl}
+                alt={`Perfil ${r.nom}`}
+                widths={[768, 1200]}
+                sizes="(max-width: 768px) 100vw, 768px"
+                quality={70}
+                class="block w-full"
+              />
+            )
+          )}
+        </div>
+        {marcadorsPerfil.length > 0 && perfilSvg && (
+          <p class="mt-1 flex items-center gap-1.5 text-xs text-stone-600">
+            <span aria-hidden="true" class="inline-block h-2.5 w-2.5 rounded-full bg-fau-600"></span>
+            Avituallament
+          </p>
+        )}
       </section>
     )}
 

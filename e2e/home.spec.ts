@@ -21,4 +21,5 @@ test('home amb recorreguts i navegació', async ({ page }) => {
   await expect(page.getByRole('heading', { name: /cursa del fau 24 km/i })).toBeVisible();
   await expect(page.getByText(/fitxa tècnica/i)).toBeVisible();
   await expect(page.locator('iframe[title^="Mapa"]')).toBeVisible();
+  await expect(page.getByRole('heading', { name: /perfil/i })).toBeVisible();
 });
