@@ -10,7 +10,7 @@ const W = 1200;
 const H = 400;
 // Esquerra ampla: les etiquetes Y ("1.250 m") no queden tallades.
 // A dalt dues carrils per a etiquetes d'avituallament sense tocar la corba.
-const MARGE = { esq: 88, dre: 20, sup: 62, inf: 38 };
+const MARGE = { esq: 88, dre: 20, sup: 82, inf: 54 };
 
 // Verd taronja del botó Inscriu-t'hi (fau-500); el punt, fosc per destacar.
 const COLOR_CORBA = '#dd9933';
