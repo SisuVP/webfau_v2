@@ -67,6 +67,23 @@ export const edicio = defineType({
       ],
     }),
     defineField({
+      name: 'resultatsSnapshots',
+      title: 'Resultats (snapshots JSON)',
+      description:
+        'Independent dels events: un per distància, aparellat per nom ("24 km"). Es genera amb `npm run snapshot:resultats` o pujant un JSON a mà.',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            defineField({name: 'nom', title: 'Nom (ha de coincidir amb la distància)', type: 'string'}),
+            defineField({name: 'dades', title: 'Dades (JSON)', type: 'file', options: {accept: '.json,application/json'}}),
+            defineField({name: 'actualitzat', title: 'Actualitzat', type: 'datetime'}),
+          ],
+        },
+      ],
+    }),
+    defineField({
       name: 'resultatsMode',
       title: 'Resultats (font)',
       description: 'JSON = snapshot immutable · API = directe de Sportmaniacs · iframe = incrustació antiga.',

@@ -34,8 +34,7 @@ export const queries = {
     "trackGpxUrl": trackGpx.asset->url
   }`,
   sponsors: `*[_type == "sponsor"] | order(ordre asc){nom, url, categoria, targetaFosca, colorFons, colorHex, "logoUrl": logo.asset->url}`,
-  edicionsResultats: `*[_type == "edicio"] | order(any desc){any, estat, data, resultatsEmbed, resultatsMode, resultatsEvents[]{nom, eventId}, resultatsLinks[]{titol, url}}`,
-  classificacions: `*[_type == "classificacio"]{nom, eventId, actualitzat, "edicioAny": edicio->any, "fitxerUrl": fitxer.asset->url}`,
+  edicionsResultats: `*[_type == "edicio"] | order(any desc){any, estat, data, resultatsEmbed, resultatsMode, resultatsEvents[]{nom, eventId}, resultatsSnapshots[]{nom, actualitzat, "dadesUrl": dades.asset->url}, resultatsLinks[]{titol, url}}`,
   edicionsGaleries: `*[_type == "edicio"] | order(any desc){any, galeries[]{titol, url, "portadaUrl": portada.asset->url}}`,
   paginaSlugs: `*[_type == "pagina" && defined(slug.current)]{"slug": slug.current}`,
   paginaBySlug: `*[_type == "pagina" && slug.current == $slug][0]{titol, cos, embedUrl}`,

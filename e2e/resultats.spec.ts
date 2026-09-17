@@ -12,7 +12,7 @@ test('resultats amb menú de distàncies i paginació', async ({ page }) => {
   // Menú visible, taules amagades
   const boto24 = edicio.getByRole('button', { name: /24 km.*arribats a meta/i });
   await expect(boto24).toBeVisible();
-  const event24 = edicio.locator('[data-event="6898888a-8928-4053-b6a8-44bfac1f0158"]');
+  const event24 = edicio.locator('[data-event="24 km"]');
   await expect(event24).toBeHidden();
 
   // Obrir distància: menú s'amaga, taula es mostra

@@ -4,9 +4,10 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Icona from '../components/Icona.astro';
 import { sanity, queries } from '../lib/sanity';
-import { obteClassificacio, type Classificacio } from '../lib/resultats';
+import { obteClassificacio, normNom, type Classificacio } from '../lib/resultats';
 
 type EventRes = { nom?: string; eventId?: string };
+type SnapRes = { nom?: string; actualitzat?: string; dadesUrl?: string };
 type Edicio = {
   any: number;
   estat?: string;
@@ -14,6 +15,7 @@ type Edicio = {
   resultatsEmbed?: string;
   resultatsMode?: string;
   resultatsEvents?: EventRes[];
+  resultatsSnapshots?: SnapRes[];
   resultatsLinks?: { titol?: string; url?: string }[];
 };
 
@@ -58,37 +60,48 @@ async function baixaSnapshot(url: string): Promise<Classificacio | null> {
 const fmtData = (iso: string) =>
   new Date(iso).toLocaleDateString('ca-ES', {day: 'numeric', month: 'numeric', year: 'numeric'});
 
-const snaps = await sanity.fetch<
-  {nom?: string; eventId?: string; actualitzat?: string; edicioAny?: number; fitxerUrl?: string}[]
->(queries.classificacions);
-const snapsPerEvent = new Map(
-  (snaps ?? []).filter((s) => s.eventId && s.fitxerUrl).map((s) => [s.eventId as string, s])
-);
-
 const taules = new Map<number, TaulaEvent[]>();
 for (const e of edicions) {
   const mode = e.resultatsMode ?? 'auto';
-  if (mode === 'iframe' || !e.resultatsEvents?.length) continue;
+  if (mode === 'iframe') continue;
   const vies: FontResultats[] = mode === 'auto' ? ['json', 'api'] : [mode as FontResultats];
+  // Unió per nom normalitzat d'events (API) i snapshots (JSON): dues
+  // llistes independents, una sola taula per distància.
+  const distancies = new Map<string, {nom: string; ev?: EventRes; snap?: SnapRes}>();
+  for (const ev of e.resultatsEvents ?? []) {
+    const clau = normNom(ev.nom ?? ev.eventId);
+    if (!clau) continue;
+    const actual = distancies.get(clau) ?? {nom: ev.nom ?? ev.eventId ?? ''};
+    actual.ev = ev;
+    if (ev.nom) actual.nom = ev.nom;
+    distancies.set(clau, actual);
+  }
+  for (const s of e.resultatsSnapshots ?? []) {
+    const clau = normNom(s.nom);
+    if (!clau) continue;
+    const actual = distancies.get(clau) ?? {nom: s.nom ?? ''};
+    actual.snap = s;
+    distancies.set(clau, actual);
+  }
   const llista: TaulaEvent[] = [];
-  for (const ev of e.resultatsEvents) {
-    if (!ev.eventId) continue;
+  for (const [, d] of distancies) {
+    if (d.ev && !d.snap) console.log(`[resultats] ${e.any}: «${d.nom}» només a events (sense snapshot)`);
+    if (d.snap && !d.ev) console.log(`[resultats] ${e.any}: «${d.nom}» només a snapshots (sense event)`);
     let cls: Classificacio | null = null;
     let font: FontResultats = 'json';
     let dataRef = '';
     for (const via of vies) {
       if (via === 'json') {
-        const snap = snapsPerEvent.get(ev.eventId);
-        if (snap?.fitxerUrl) {
-          const c = await baixaSnapshot(snap.fitxerUrl);
+        if (d.snap?.dadesUrl) {
+          const c = await baixaSnapshot(d.snap.dadesUrl);
           if (c) {
             cls = c;
             font = 'json';
-            dataRef = snap.actualitzat ? fmtData(snap.actualitzat) : dataSnapshot;
+            dataRef = d.snap.actualitzat ? fmtData(d.snap.actualitzat) : dataSnapshot;
           }
         }
-      } else {
-        const c = await obteClassificacio(ev.eventId);
+      } else if (d.ev?.eventId) {
+        const c = await obteClassificacio(d.ev.eventId);
         if (c) {
           cls = c;
           font = 'api';
@@ -102,9 +115,12 @@ for (const e of edicions) {
       for (const f of cls.masculina) mapaGenere.set(f.dorsal, `${f.pos} M`);
       for (const f of cls.femenina) mapaGenere.set(f.dorsal, `${f.pos} F`);
       llista.push({
-        nom: ev.nom ?? 'General',
-        eventId: ev.eventId,
-        enllac: e.resultatsEmbed ? `${e.resultatsEmbed}/${ev.eventId}/results` : 'https://sportmaniacs.com/',
+        nom: d.nom || 'General',
+        eventId: d.ev?.eventId ?? '',
+        enllac:
+          e.resultatsEmbed && d.ev?.eventId
+            ? `${e.resultatsEmbed}/${d.ev.eventId}/results`
+            : 'https://sportmaniacs.com/',
         cls,
         mapaGenere,
         font,
@@ -156,7 +172,7 @@ const CATEGORIES = [
                         {llista.map((t) => (
                           <button
                             type="button"
-                            data-tria={t.eventId}
+                            data-tria={t.nom}
                             class="rounded-lg border border-stone-200 bg-stone-50 px-5 py-4 text-left shadow-sm transition hover:border-fau-500 hover:shadow"
                           >
                             <span class="font-display block text-lg font-bold">{t.nom}</span>
@@ -166,7 +182,7 @@ const CATEGORIES = [
                       </div>
                     )}
                     {llista.map((t) => (
-                      <div data-event={t.eventId} hidden={multi} class="mt-6 overflow-hidden rounded-lg border border-stone-200 bg-white" data-classificacio>
+                      <div data-event={t.nom} hidden={multi} class="mt-6 overflow-hidden rounded-lg border border-stone-200 bg-white" data-classificacio>
                         <div class="flex flex-wrap items-center justify-between gap-3 border-b border-stone-200 bg-stone-50 px-4 py-3">
                           <div class="flex items-center gap-3">
                             {multi && (

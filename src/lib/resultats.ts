@@ -17,6 +17,11 @@ export type Classificacio = {
   total: number;
 };
 
+/** Normalitza noms de distància per aparellar ("24 KM" = "24km") */
+export function normNom(nom?: string | null): string {
+  return (nom ?? '').toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
 const API_URL = 'https://sportmaniacs.com/ca/api/rankings';
 
 type FilaApi = {
