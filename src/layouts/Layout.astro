@@ -4,6 +4,8 @@ interface Props {
   description?: string;
   image?: string;
   jsonLd?: Record<string, unknown>;
+  /** Pàgines internes (eines): fora d'índexs de cerca */
+  noindex?: boolean;
 }
 import '../styles/global.css';
 import '@fontsource/oswald/500.css';
@@ -25,6 +27,7 @@ const {
   description = 'Cursa de muntanya a Maçanet de Cabrenys. 24km, 18km i 9km. 9 d’agost de 2026.',
   image,
   jsonLd,
+  noindex = false,
 } = Astro.props;
 ---
 <!doctype html>
@@ -36,6 +39,7 @@ const {
     <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="generator" content={Astro.generator} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta property="og:title" content={title} />
